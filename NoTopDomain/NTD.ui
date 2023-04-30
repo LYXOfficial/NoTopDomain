@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NoTopDomain</class>
+ <widget class="QMainWindow" name="NoTopDomain">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>471</width>
+    <height>447</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Microsoft YaHei UI Light</family>
+    <pointsize>9</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>NoTopDomain v0.01 By LYX</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="leftMargin">
+     <number>3</number>
+    </property>
+    <property name="topMargin">
+     <number>3</number>
+    </property>
+    <property name="rightMargin">
+     <number>3</number>
+    </property>
+    <property name="bottomMargin">
+     <number>3</number>
+    </property>
+    <property name="spacing">
+     <number>3</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="PigeonGames">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>极域</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <property name="leftMargin">
+         <number>3</number>
+        </property>
+        <property name="topMargin">
+         <number>3</number>
+        </property>
+        <property name="rightMargin">
+         <number>3</number>
+        </property>
+        <property name="bottomMargin">
+         <number>3</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="StudentRunning">
+          <property name="text">
+           <string>极域：&lt;span style=&quot;color:grey&quot;&gt;检测中&lt;/span&gt;</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="GBing">
+          <property name="text">
+           <string>广播：&lt;span style=&quot;color:grey&quot;&gt;检测中&lt;/span&gt;</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>常用功能</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="2">
+            <widget class="QPushButton" name="KillCurrent">
+             <property name="text">
+              <string>强制杀掉选择程序</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QPushButton" name="GBWindowed">
+             <property name="text">
+              <string>解冻全屏</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QPushButton" name="NoPin">
+             <property name="text">
+              <string>取消选中焦点</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="7" colspan="6">
+            <widget class="QPushButton" name="KillTD">
+             <property name="text">
+              <string>杀掉极域！！！</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QPushButton" name="HangUpTD">
+             <property name="text">
+              <string>挂起极域</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="7" colspan="6">
+            <widget class="QLineEdit" name="TDPwd">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="inputMask">
+              <string>尝试获取密码...</string>
+             </property>
+             <property name="text">
+              <string>尝试获取密码...</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>限制解除（部分需要在连接前解除，可以拔掉网线重启电脑）</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_3">
+           <item row="3" column="0">
+            <widget class="QCheckBox" name="ForYourSafety">
+             <property name="text">
+              <string>伪装教师端连接</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QPushButton" name="TSKYes">
+             <property name="text">
+              <string>解禁任务管理器</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QCheckBox" name="AppsYes">
+             <property name="text">
+              <string>解除应用限制</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QCheckBox" name="WebsiteYes">
+             <property name="text">
+              <string>解除网站限制</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QPushButton" name="RegEditYes">
+             <property name="text">
+              <string>解禁注册表编辑器</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QPushButton" name="CMDYes">
+             <property name="text">
+              <string>解禁CMD</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2" colspan="2">
+            <widget class="QCheckBox" name="USBYes">
+             <property name="text">
+              <string>解除USB限制</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="MouseYes">
+             <property name="text">
+              <string>解除鼠标限制</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="KeyboardYes">
+             <property name="text">
+              <string>解除键盘限制</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2" colspan="2">
+            <widget class="QCheckBox" name="NoGBHP">
+             <property name="text">
+              <string>屏蔽广播/黑屏安静</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2" colspan="2">
+            <widget class="QPushButton" name="pushButton_5">
+             <property name="text">
+              <string>解禁Ctrl+Alt+Del</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="2" colspan="2">
+            <widget class="QPushButton" name="NoRes">
+             <property name="text">
+              <string>尝试破解还原卡</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="2">
+         <widget class="QPushButton" name="WhereIsMyFile">
+          <property name="text">
+           <string>接收遗漏文件</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>学生机房管理助手</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QLabel" name="PhigrosChapter9">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>咕咕咕！（傲娇）</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>471</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>项目（也许有你需要的）</string>
+    </property>
+    <addaction name="action_1"/>
+    <addaction name="action_2"/>
+    <addaction name="action_3"/>
+    <addaction name="action_4"/>
+    <addaction name="action_5"/>
+   </widget>
+   <addaction name="menu"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="action1">
+   <property name="text">
+    <string>1</string>
+   </property>
+  </action>
+  <action name="action_1">
+   <property name="text">
+    <string>关于</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>设置</string>
+   </property>
+  </action>
+  <action name="action_3">
+   <property name="text">
+    <string>启动TSK</string>
+   </property>
+  </action>
+  <action name="action_4">
+   <property name="text">
+    <string>运行...</string>
+   </property>
+  </action>
+  <action name="action_5">
+   <property name="text">
+    <string>映像劫持</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
