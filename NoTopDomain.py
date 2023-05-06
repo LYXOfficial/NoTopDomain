@@ -1,7 +1,7 @@
-VERSION="b1.1"
+VERSION="b1.2"
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon,QPixmap
-from PyQt5.QtCore import Qt,QObject,pyqtSignal,QTimer,QThread
+from PyQt5.QtCore import Qt,QObject,pyqtSignal,QTimer
 from Ui_NTD import *
 from win32api import *
 from win32con import *
@@ -11,8 +11,8 @@ from win32gui_struct import *
 from ctypes import *
 from ctypes.wintypes import *
 from system_hotkey import SystemHotkey
-from multiprocessing import Process,Value
-import sys,os,psutil,subprocess,b64,base64,random,webbrowser
+from threading import *
+import sys,os,psutil,subprocess,b64,base64,random,webbrowser,math
 class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     sw=pyqtSignal()
     st=pyqtSignal()
@@ -107,7 +107,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         return 1
     def closeEvent(self, event):
         event.accept()
-        thread.terminate()
+        try:
+            thread.terminate()
+        except:
+            pass
         os._exit(0)
     def killFocus(self):
         if not self.isActiveWindow():
@@ -264,6 +267,9 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         else:
             SetWindowPos(hwnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE)
             self.Stasis.setText("取消置顶选中窗口，hwnd: %d"%hwnd)
+    def nbs(self):
+        global flag3
+        flag3=not flag3
     def setup(self):
         self.setWindowTitle("NoTopDomain %s By LYX"%VERSION)
         self.st.connect(self.startTSK)
@@ -304,7 +310,9 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         #     FreeLibrary(hook)
         # except:
         #     pass #打不开？
-        self.setFixedSize(360,390)
+        windll.user32.SetProcessDPIAware()
+        dpi=windll.gdi32.GetDeviceCaps(windll.user32.GetDC(0),LOGPIXELSX)/96
+        self.setFixedSize(int(360*dpi),int(390*dpi))
         self.setGeometry(100,100,self.width(),self.height())
         self.TDState=1
         self.HangState=1
@@ -317,7 +325,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.zb.timeout.connect(self.ZB)
         self.zb.start()
         self.Stasis=QLabel()
-        self.WebsiteYes.clicked.connect(self.websiteYes)
+        self.WebsiteYes.clicked.connect(lambda:Thread(target=self.websiteYes).start())
         try:
             self.hk=SystemHotkey()
             self.hk.register(("alt","m"),callback=lambda _:self.sw.emit())
@@ -368,6 +376,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.Stasis.setWordWrap(1)
         self.statusbar.addWidget(self.Stasis)
         self.NoImg.clicked.connect(self.noImg)
+        self.NoBlackScreen.clicked.connect(self.nbs)
         self.USBYes.clicked.connect(lambda:Thread(target=self.usbYes).start())
         self.tray.activated[QSystemTrayIcon.ActivationReason].connect(self.activate)
         SetWindowPos(self.winId(),HWND_TOPMOST,self.x(),self.y(),self.width(),self.height(),SWP_NOSIZE|SWP_NOZORDER)
@@ -393,10 +402,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     def toTop(self):
         global flag
         if self.IamTop.checkState()==Qt.Unchecked:
-            flag.value=0
+            flag=0
             self.Stasis.setText("取消置顶")
         else:
-            flag.value=1
+            flag=1
             self.Stasis.setText("置顶完毕") 
     def activate(self,reason):
         if reason == QSystemTrayIcon.DoubleClick:
@@ -404,10 +413,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     def enableKeyboard(self):
         global flag2
         if self.KeyboardYes.checkState()==Qt.Checked:
-            flag2.value=0
+            flag2=0
             self.Stasis.setText("解键盘锁成功")
         else:
-            flag2.value=1
+            flag2=1
             self.Stasis.setText("恢复键盘锁成功")
     def hangTD(self):
         if self.HangState:
@@ -477,42 +486,44 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             self.activateWindow()
         else:
             self.hide()
-class UnlockKeyboard(Process):
-    def __init__(self,flag2):
-        super().__init__()
-        self.flag2=flag2
-    def run(self):
-        while(1):
-            if(self.flag2.value):
-                kbdHook=windll.user32.SetWindowsHookExA(WH_KEYBOARD_LL,0,0,0)
-                Sleep(15)
-                windll.user32.UnhookWindowsHookEx(kbdHook)
-class SetWindowPref(Process):
-    def __init__(self,flag,hwnd):
-        super().__init__()
-        self.flag=flag
-        self.hwnd=hwnd
-    def run(self):
-        while(1):
-            if(self.flag.value):
-                SetWindowPos(self.hwnd,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE)
-                Sleep(10)
-            else:
-                SetWindowPos(self.hwnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE)
-                Sleep(10)
-class setState(QThread):
+class UnlockKeyboard(Thread):
     def __init__(self):
         super().__init__()
     def run(self):
-        s=subprocess.run("tasklist|find /i \"studentmain.exe\"",shell=True,stdout=subprocess.PIPE).returncode
-        if s:
-            window.TDState=0
-            window.KillTD.setText("启动极域！！！")
+        while(1):
+            if(flag2):
+                # kbdHook=windll.user32.SetWindowsHookExA(WH_KEYBOARD_LL,0,0,0)
+                # Sleep(15)
+                # windll.user32.UnhookWindowsHookEx(kbdHook)
+                Tools.UnlockKeyboard()
+class SetWindowPref(Thread):
+    def __init__(self,hwnd):
+        super().__init__()
+        self.hwnd=hwnd
+    def run(self):
+        while(1):
+            if(flag):
+                Tools.SetWindowPref(self.hwnd)
+            else:
+                Tools.SetWindowNoPref(self.hwnd)
+class setState(Thread):
+    def __init__(self):
+        super().__init__()
+    def run(self):
+        pids=psutil.process_iter()
+        for p in pids:
+            if(p.name().lower()=="studentmain.exe"):
+                window.TDState=0
+                window.KillTD.setText("启动极域！！！")
         while(1):
             if not window.HangState:
                 window.StudentRunning.setText("极域：<span style=\"color:red\">挂起中</span>")
             else:
-                s=subprocess.run("tasklist|find /i \"studentmain.exe\"",shell=True,stdout=subprocess.PIPE).returncode
+                s=1
+                pids=psutil.process_iter()
+                for p in pids:
+                    if(p.name().lower()=="studentmain.exe"):
+                        s=0
                 if s:
                     window.StudentRunning.setText("极域：<span style=\"color:green\">未运行</span>")
                     window.HangUpTD.setEnabled(False)
@@ -526,9 +537,19 @@ class setState(QThread):
                     window.HangState=1
                     window.HangUpTD.setText("挂起极域")
             hWndList = [] 
-            EnumWindows(lambda hWnd, param: param.append(hWnd), hWndList) 
+            EnumWindows(lambda hWnd, param: param.append(hWnd), hWndList)
+            flag=1
             for hwnd in hWndList:
                 title = GetWindowText(hwnd)
+                if title=="BlackScreen Window":
+                    flag=0
+                    window.GBWindowed.setText("解冻全屏")
+                    window.GBWindowed.setEnabled(False)
+                    if not flag3:
+                        window.GBing.setText("<span style=\"color:purple\">黑屏安静中</span>")
+                    else:
+                        window.GBing.setText("<span style=\"color:blue\">黑屏安静已屏蔽</span>")
+                    break
                 if title=="屏幕广播":
                     window.GBing.setText("广播：<span style=\"color:orange\">进行中</span>")
                     window.GBWindowed.setEnabled(True)
@@ -538,20 +559,52 @@ class setState(QThread):
                         EnumChildWindows(hwnd,window.EnumChildWindowsProc2,LPARAM)
                     except:
                         pass
-                    return
-            window.GBing.setText("广播：<span style=\"color:green\">未进行</span>")
-            window.GBWindowed.setText("解冻全屏")
-            window.GBWindowed.setEnabled(False)
+                    flag=0
+                    break
+            if flag:
+                window.GBing.setText("广播：<span style=\"color:green\">未进行</span>")
+                window.GBWindowed.setText("解冻全屏")
+                window.GBWindowed.setEnabled(False)
             Sleep(1000)
+class NoBlackScreen(Thread):
+    def __init__(self):
+        super().__init__()
+    def run(self):
+        while(1):
+            if flag3:
+                hWndList = [] 
+                EnumWindows(lambda hWnd, param: param.append(hWnd), hWndList)
+                for hwnd in hWndList:
+                    title = GetWindowText(hwnd)
+                    if title=="BlackScreen Window":
+                        SetWindowPos(hwnd,HWND_BOTTOM,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE|SWP_HIDEWINDOW)
+            else:
+                hWndList = [] 
+                EnumWindows(lambda hWnd, param: param.append(hWnd), hWndList)
+                for hwnd in hWndList:
+                    title = GetWindowText(hwnd)
+                    if title=="BlackScreen Window":
+                        SetWindowPos(hwnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE|SWP_SHOWWINDOW)
+            Sleep(500)
 if __name__=="__main__":
+    with open(os.getenv("temp")+"\\NTDTools.dll","wb") as f:
+        f.write(base64.b64decode(b64.tools64))
+    with open(os.getenv("temp")+"\\NTDTools32.dll","wb") as f:
+        f.write(base64.b64decode(b64.tools32))
+    try:
+        Tools=CDLL(os.getenv("temp")+"\\NTDTools.dll",winmode=0)
+    except:
+        Tools=CDLL(os.getenv("temp")+"\\NTDTools32.dll",winmode=0)
     app=QApplication(sys.argv)
     os.chdir(os.getenv("SystemDrive"))
-    flag,flag2=Value("d",1),Value("d",1)
+    flag,flag2,flag3=1,1,0
     window=NoTopDomain()
-    thread=SetWindowPref(flag,int(window.winId()))
+    thread=SetWindowPref(int(window.winId()))
     thread.start()
-    thread2=UnlockKeyboard(flag2)
+    thread2=UnlockKeyboard()
     thread2.start()
     stateThread=setState()
     stateThread.start()
+    blackScreenThread=NoBlackScreen()
+    blackScreenThread.start()
     sys.exit(app.exec_())

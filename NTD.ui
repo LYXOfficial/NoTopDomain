@@ -47,16 +47,16 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4">
         <property name="leftMargin">
-         <number>3</number>
+         <number>5</number>
         </property>
         <property name="topMargin">
-         <number>3</number>
+         <number>5</number>
         </property>
         <property name="rightMargin">
-         <number>3</number>
+         <number>5</number>
         </property>
         <property name="bottomMargin">
-         <number>3</number>
+         <number>5</number>
         </property>
         <item row="0" column="0">
          <widget class="QLabel" name="StudentRunning">
@@ -80,11 +80,11 @@
           <layout class="QGridLayout" name="gridLayout_2">
            <item row="0" column="2">
             <widget class="QPushButton" name="KillCurrent">
-             <property name="text">
-              <string>杀掉进程↓</string>
-             </property>
              <property name="enabled">
               <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>杀掉进程↓</string>
              </property>
             </widget>
            </item>
@@ -97,10 +97,9 @@
            </item>
            <item row="1" column="2">
             <widget class="QLineEdit" name="KillSome">
-            <property name="placeholderText">
-            <string>*.exe/进程PID</string>
-            </property>
-            
+             <property name="placeholderText">
+              <string>*.exe/进程PID</string>
+             </property>
             </widget>
            </item>
            <item row="0" column="7" colspan="6">
@@ -243,6 +242,13 @@
         <string>设置</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_6">
+        <item row="1" column="0">
+         <widget class="QCheckBox" name="checkBox_2">
+          <property name="text">
+           <string>修改窗口化按钮时自动点击以缩小/放大</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QCheckBox" name="checkBox">
           <property name="text">
@@ -250,17 +256,74 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="checkBox_2">
+        <item row="3" column="0">
+         <layout class="QFormLayout" name="formLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>唤起窗口快捷键</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="showWindowHostKey"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>任务管理器快捷键</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="TSKHotKey"/>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>置顶当前窗口快捷键</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="topFocusHotKey"/>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>杀掉当前窗口快捷键</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="killFocusHotKey"/>
+          </item>
+         </layout>
+        </item>
+        <item row="5" column="0">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="8" column="0">
+         <widget class="QPushButton" name="pushButton">
           <property name="text">
-           <string>修复</string>
+           <string>以System权限重启（防置顶闪烁）</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
-         <widget class="QPushButton" name="pushButton">
+        <item row="6" column="0">
+         <widget class="QPushButton" name="pushButton_2">
           <property name="text">
-           <string>以System权限重启</string>
+           <string>保存</string>
           </property>
          </widget>
         </item>
