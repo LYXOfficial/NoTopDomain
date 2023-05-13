@@ -1,1 +1,0 @@
-nuitka NoTopDomain.py --mingw64 --standalone --enable-plugin=pyqt5 --windows-icon-from-ico=app.ico --onefile --nofollow-imports --windows-disable-console

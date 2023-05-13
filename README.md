@@ -1,2 +1,5 @@
 # NoTopDomain
-极域，就你也配跟学生搏斗？ || Powered By Python3.8&amp;&amp;PyQt5&amp;&amp;pywin32&amp;&amp;psutil&amp;&amp;ntsd || 咕咕咕
+
+极域，就你也敢创掉无数无辜学生？
+
+你还在为极域控制，老师禁用，上课效率太低而烦恼吗？这个软件将帮你解决问题！

@@ -9,7 +9,6 @@ more string representations than there are keysyms.)
 This list is taken from Xlib.
 """
 from collections import defaultdict
-
 keysyms = {
     'VoidSymbol': 0xffffff,
     'BackSpace': 0xff08,
@@ -170,6 +169,7 @@ keysyms = {
     'F35': 0xffe0,
     'R15': 0xffe0,
     'Shift_L': 0xffe1,
+    'Shift': 0xffe1,
     'Shift_R': 0xffe2,
     'Control_L': 0xffe3,
     'Control_R': 0xffe4,
@@ -2016,6 +2016,7 @@ keysyms = {
     'braille_dots_1345678': 0x10028fd,
     'braille_dots_2345678': 0x10028fe,
     'braille_dots_12345678': 0x10028ff,
+
 }
 
 keysym_strings = defaultdict(list)
