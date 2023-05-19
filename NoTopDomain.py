@@ -1,4 +1,4 @@
-VERSION="b1.4"
+VERSION="b1.5"
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon,QPixmap
 from PyQt5.QtCore import Qt,QObject,pyqtSignal,QTimer,QEvent,QCoreApplication
@@ -71,7 +71,8 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.zb.setInterval(random.randint(200,3000))
         self.zb.timeout.connect(self.ZB)
         self.zb.start()
-        self.setStyleSheet(b64.qss)
+        if not self.config.get("QssDisabled"):
+            self.setStyleSheet(b64.qss)
         self.EnableTDBar.clicked.connect(self.enableBar)
         self.Stasis=QLabel()
         self.UnlockTDHook.clicked.connect(self.unHook)
@@ -95,7 +96,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             if ff:
                 self.Stasis.setText("加载工具DLL失败，部分功能受影响")
             else:
-                self.Stasis.setText("等待操作...")
+                self.Stasis.setText("等待操作...(初次使用建议查看帮助)")
         self.sw.connect(self.showWindow)
         self.GBWindowed.clicked.connect(self.EnableFullScreen)
         self.action_1=QAction("关于")
@@ -227,18 +228,18 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             self.tray.show()
     def restart(self):
         os.chdir(bl)
-        python = sys.executable
-        os.execl(python, python, *sys.argv)
+        subprocess.Popen(" ".join(psutil.Process(os.getpid()).cmdline()),shell=True)
+        self.close()
     def enableBar(self):
-        # try:
-        hwnd=FindWindow("Afx:00400000:b","")
-        if hwnd:
-            EnumChildWindows(hwnd,self.EnumChildWindowsProc3,LPARAM)
-            self.Stasis.setText("解禁工具栏成功")
-        else:
-            self.Stasis.setText("获取极域工具栏失败")
-        # except:
-        #     self.Stasis.setText("解禁工具栏失败")
+        try:
+            hwnd=FindWindow("Afx:00400000:b","")
+            if hwnd:
+                EnumChildWindows(hwnd,self.EnumChildWindowsProc3,LPARAM)
+                self.Stasis.setText("解禁工具栏成功 咕咕咕")
+            else:
+                self.Stasis.setText("获取极域工具栏失败 咕咕咕")
+        except:
+            self.Stasis.setText("解禁工具栏失败 咕咕咕")
     def EnumChildWindowsProc3(self,hwndChild,lParam):
         EnableWindow(hwndChild)
     def EnumChildWindowsProc2(self,hwndChild,lParam):
@@ -339,13 +340,15 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                     self.config=json.load(f)
             except:
                 with open(os.getenv("temp")+"\\NTDConfig.json","w+") as f:
-                    self.config={"HideTrayIcon":0,"AutoCommand":0,"AcWindow":"alt+m","StartTSK":"alt+t","TopWindow":"alt+y","KillWindow":"alt+k"}
+                    self.config={"HideTrayIcon":0,"AutoCommand":0,"QssDisabled":0,"AcWindow":"alt+m","StartTSK":"alt+t","TopWindow":"alt+y","KillWindow":"alt+k"}
                     f.seek(0)
                     json.dump(self.config,f)
             if self.config.get("HideTrayIcon"):
                 self.checkBox.click()
             if self.config.get("AutoCommand"):
                 self.checkBox_2.click()
+            if self.config.get("QssDisabled"):
+                self.checkBox_3.click()
             self.showWindowHotKey.setText(self.config.get("AcWindow").upper())
             self.TSKHotKey.setText(self.config.get("StartTSK").upper())
             self.topFocusHotKey.setText(self.config.get("TopWindow").upper())
@@ -375,6 +378,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         try:
             self.config["HideTrayIcon"]=self.checkBox.isChecked()
             self.config["AutoCommand"]=self.checkBox_2.isChecked()
+            self.config["QssDisabled"]=self.checkBox_3.isChecked()
             self.config["AcWindow"]=self.showWindowHotKey.text().lower()
             self.config["StartTSK"]=self.TSKHotKey.text().lower()
             self.config["TopWindow"]=self.topFocusHotKey.text().lower()
@@ -386,7 +390,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             self.Stasis.setText("保存失败")
     def closeEvent(self, event):
         event.accept()
-        self.tray.hide()
+        try:
+            self.tray.hide()
+        except:
+            pass
         os._exit(0)
     def killFocus(self):
         if not self.isActiveWindow():
@@ -478,18 +485,28 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     def showHelp(self):
         try:
             QMessageBox.information(self,'帮助',"""1.%s唤起软件，%s杀死焦点进程（有保护），%s启动任务管理器，%s切换窗口置顶状态
+
 2.因设计缺陷，在全屏时唤起后窗口会出现闪烁，属于正常现象
+
 3.若部分功能失败，不妨解除其它限制再试试？
-4.部分解除限制功能需要在连接前解除，可以拔掉网线重启电脑
-5.可以通过挂起极域来在教师端伪装连接
-6.还没做完呢！咕咕咕！"""%(self.config.get("AcWindow").upper(),self.config.get("KillWindow").upper(),self.config.get("StartTSK").upper(),self.config.get("TopWindow").upper()))
+
+4.解冻全屏后，窗口不会自动缩小，请手动点击悬浮栏右上角的按钮，或者是把设置里面第二项打开。
+
+5.可以通过挂起极域来在教师端伪装连接。（亲测可行）
+
+6.设置一定要保存！除了快捷键以外保存设置都不需要重启。"""%(self.config.get("AcWindow").upper(),self.config.get("KillWindow").upper(),self.config.get("StartTSK").upper(),self.config.get("TopWindow").upper()))
         except:
             QMessageBox.information(self,'帮助',"""1.ALT+M唤起软件，ALT+K杀死焦点进程（有保护），ALT+T启动任务管理器，ALT+Y切换窗口置顶状态
-    2.因设计缺陷，在全屏时唤起后窗口会出现闪烁，属于正常现象
-    3.若部分功能失败，不妨解除其它限制再试试？
-    4.部分解除限制功能需要在连接前解除，可以拔掉网线重启电脑
-    5.可以通过挂起极域来在教师端伪装连接
-    6.还没做完呢！咕咕咕！""")
+
+2.因设计缺陷，在全屏时唤起后窗口会出现闪烁，属于正常现象
+
+3.若部分功能失败，不妨解除其它限制再试试？
+
+4.解冻全屏后，窗口不会自动缩小，请手动点击悬浮栏右上角的按钮，或者是把设置里面第二项打开。
+
+5.可以通过挂起极域来在教师端伪装连接。（亲测可行）
+
+6.设置一定要保存！除了快捷键以外保存设置都不需要重启。""")
     def killCurrent(self):
         try:
             if self.KillSome.text().isdigit():
@@ -631,14 +648,14 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                 TerminateProcess(handle,0)
                 self.Stasis.setText("成功杀掉极域")
                 self.TDState=0
-                self.KillTD.setText("老师来了！！！")
+                self.KillTD.setText("启动极域！！")
             except:
                 self.Stasis.setText("杀极域失败，可能开启了防杀")
         else:
             try:
                 os.startfile(self.location+"studentmain.exe")
                 self.TDState=1
-                self.KillTD.setText("杀掉极域！！！")
+                self.KillTD.setText("杀掉极域！！")
                 self.Stasis.setText("成功启动极域")
                 self.HangState=1
                 self.HangUpTD.setText("挂起极域")
@@ -686,7 +703,7 @@ class setState(Thread):
         for p in pids:
             if(p.name().lower()=="studentmain.exe"):
                 window.TDState=0
-                window.KillTD.setText("启动极域！！！")
+                window.KillTD.setText("启动极域！！")
         while(1):
             if not window.HangState:
                 window.StudentRunning.setText("极域：<span style=\"color:red\">挂起中</span>")
@@ -702,13 +719,13 @@ class setState(Thread):
                     window.HangUpTD.setEnabled(False)
                     window.EnableTDBar.setEnabled(False)
                     window.TDState=0
-                    window.KillTD.setText("老师来了！！！")
+                    window.KillTD.setText("恢复极域！！")
                 else:
                     window.StudentRunning.setText("极域：<span style=\"color:orange\">运行中</span> <span style=\"color:gray\">PID: %s</span>"%pid)
                     window.HangUpTD.setEnabled(True)
                     window.EnableTDBar.setEnabled(True)
                     window.TDState=1
-                    window.KillTD.setText("杀掉极域！！！")
+                    window.KillTD.setText("杀掉极域！！")
                     window.HangState=1
                     window.HangUpTD.setText("挂起极域")
             self.flag=1
