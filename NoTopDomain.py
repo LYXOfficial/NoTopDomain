@@ -1,4 +1,4 @@
-VERSION="b1.3"
+VERSION="b1.4"
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon,QPixmap
 from PyQt5.QtCore import Qt,QObject,pyqtSignal,QTimer,QEvent,QCoreApplication
@@ -12,7 +12,7 @@ from ctypes import *
 from ctypes.wintypes import *
 from system_hotkey import SystemHotkey
 from threading import *
-import sys,os,psutil,subprocess,b64,base64,random,webbrowser,math,json,hashlib
+import sys,os,psutil,subprocess,b64,base64,random,webbrowser,hashlib,json,hashlib
 class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     sw=pyqtSignal()
     st=pyqtSignal()
@@ -71,6 +71,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.zb.setInterval(random.randint(200,3000))
         self.zb.timeout.connect(self.ZB)
         self.zb.start()
+        self.setStyleSheet(b64.qss)
         self.EnableTDBar.clicked.connect(self.enableBar)
         self.Stasis=QLabel()
         self.UnlockTDHook.clicked.connect(self.unHook)
@@ -203,7 +204,6 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                         hook=GetModuleHandle("LibTDProcHook32.dll")
                         FreeLibrary(hook)
                         self.Stasis.setText("解Hook成功")
-                            
                 except:
                     self.Stasis.setText("并未开启防杀")
                     self.UnlockTDHook.setCheckState(Qt.CheckState.Unchecked)
@@ -287,7 +287,8 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         except:
             self.Stasis.setText("解禁失败")
     def cb2(self,hwnd,lParam):
-        if "正在共享屏幕" in hwnd:
+        if "正在共享屏幕" in GetWindowText(hwnd):
+            self.h=hwnd
             EnumChildWindows(hwnd,self.EnumChildWindowsProc,LPARAM)
             self.Stasis.setText("解禁按钮成功")
         return 1
@@ -298,6 +299,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                 EnableWindow(hwndChild, TRUE)
                 if self.config.get("AutoCommand"):
                     if GetWindowRect(self.h)==GetWindowRect(GetDesktopWindow()):
+                        # PostMessage(hwndChild,WM_COMMAND,WPARAM((BM_CLICK<<16)|1004),NULL)
                         x,y=GetCursorPos()
                         g=GetWindowRect(hwndChild)
                         SetCursorPos((g[0]+10,g[1]+10))
@@ -308,14 +310,13 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                         Sleep(50)
                         mouse_event(MOUSEEVENTF_LEFTUP|MOUSEEVENTF_ABSOLUTE,0,0)
                         SetCursorPos((x,y))
-                # 后面设置里面加上，咕咕咕！
                 self.GBWindowed.setText("禁用全屏")
                 self.Stasis.setText("解禁按钮成功")
                 return 0
             else:
                 if self.config.get("AutoCommand"):
                     if GetWindowRect(self.h)!=GetWindowRect(GetDesktopWindow()):
-                        print(1)
+                        # PostMessage(hwndChild,WM_COMMAND,WPARAM((BM_CLICK<<16)|1004),NULL)
                         x,y=GetCursorPos()
                         g=GetWindowRect(hwndChild)
                         SetCursorPos((g[0]+10,g[1]+10))
@@ -425,7 +426,11 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         except:
             self.Stasis.setText("解禁失败，请尝试以管理员权限启动")
     def restartExplorer(self):
-        subprocess.run("tskill explorer",shell=True,stdout=subprocess.PIPE)
+        pids=psutil.process_iter()
+        for p in pids:
+            if(p.name().lower()=="explorer.exe"):
+                handle=OpenProcess(PROCESS_TERMINATE,0,p.pid)
+                TerminateProcess(handle,0)
         self.Stasis.setText("重启成功")
     def noImg(self):
         s=QMessageBox.question(self,"警告","重置映像劫持不可逆，是否继续？")
@@ -762,10 +767,6 @@ class NoBlackScreen(Thread):
                 if hwnd:
                     SetWindowPos(hwnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE|SWP_SHOWWINDOW)
             Sleep(500)
-import os
-import hashlib
-
-# 使用python3.8及以上可以用此方法，写法更简洁。
 def fileHash(file_path:str, hash_method) -> str:
     if not os.path.exists(file_path):
         return ""
@@ -777,7 +778,7 @@ def fileHash(file_path:str, hash_method) -> str:
 def filesha1(file_path: str) -> str:
     return fileHash(file_path,hashlib.sha1)
 if __name__=="__main__":
-    QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
+    QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     ff=0
     try:
         if filesha1(os.getenv("temp")+"\\NTDTools.dll")!=b64.sha1_dll:

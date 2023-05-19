@@ -1,0 +1,41 @@
+QMainWindow *{
+	font-family:"Microsoft YaHei UI Light";
+}
+QMainWindow{
+	margin-top:0;
+}
+QPushButton{
+	padding-left: 7px;
+	padding-right:7px;
+	padding-top:5px;
+	padding-bottom:5px;
+	height:15px;
+	border:none;
+	background-color: #cccccc;
+	border-radius:3px;
+}
+QPushButton:hover{
+	background-color:#bbbbbb;
+}
+QPushButton:pressed{
+	background-color:#aaaaaa;
+}
+QLineEdit{
+	height:20px;
+}
+QCheckBox{
+	margin:2px;
+}
+QTabBar::tab{
+	background:transparent;
+	border:none;
+	padding:5px;
+	margin:4px;
+	height:15px;
+}
+QTabBar::tab:hover{
+	color:#555555;
+}
+QTabBar::tab:selected{
+	border-bottom:2px solid blue;
+}

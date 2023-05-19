@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>365</width>
-    <height>375</height>
+    <width>345</width>
+    <height>376</height>
    </rect>
   </property>
   <property name="font">
@@ -122,8 +122,24 @@
           <property name="title">
            <string>常用功能</string>
           </property>
-          <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="2">
+          <layout class="QGridLayout" name="gridLayout_2" rowstretch="1,1" columnstretch="1,1,1">
+           <property name="verticalSpacing">
+            <number>7</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QPushButton" name="HangUpTD">
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>挂起极域</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
             <widget class="QPushButton" name="KillCurrent">
              <property name="enabled">
               <bool>false</bool>
@@ -133,36 +149,71 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QPushButton" name="GBWindowed">
-             <property name="text">
-              <string>解冻全屏</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <widget class="QLineEdit" name="KillSome">
-             <property name="placeholderText">
-              <string>*.exe/进程PID</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="7" colspan="6">
+           <item row="0" column="2">
             <widget class="QPushButton" name="KillTD">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="text">
               <string>杀掉极域！！！</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QPushButton" name="HangUpTD">
+           <item row="1" column="0">
+            <widget class="QPushButton" name="GBWindowed">
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
              <property name="text">
-              <string>挂起极域</string>
+              <string>解冻全屏</string>
+             </property>
+             <property name="autoDefault">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="1" column="7" colspan="6">
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="KillSome">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>0</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="placeholderText">
+              <string>*.exe/进程PID</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
             <widget class="QPushButton" name="EnableTDBar">
+             <property name="maximumSize">
+              <size>
+               <width>120</width>
+               <height>16777215</height>
+              </size>
+             </property>
              <property name="text">
               <string>解禁工具栏功能</string>
              </property>
@@ -286,7 +337,7 @@
         <item row="1" column="0">
          <widget class="QCheckBox" name="checkBox_2">
           <property name="text">
-           <string>修改窗口化按钮时自动点击（实验性）</string>
+           <string>修改窗口化时自动缩放窗口（实验性）</string>
           </property>
          </widget>
         </item>
@@ -379,7 +430,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>365</width>
+     <width>345</width>
      <height>22</height>
     </rect>
    </property>
