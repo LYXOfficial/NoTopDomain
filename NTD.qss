@@ -9,7 +9,7 @@ QPushButton{
 	padding-right:7px;
 	padding-top:5px;
 	padding-bottom:5px;
-	height:15px;
+	height:0.9em;
 	border:none;
 	background-color: #cccccc;
 	border-radius:3px;
@@ -21,7 +21,7 @@ QPushButton:pressed{
 	background-color:#aaaaaa;
 }
 QLineEdit{
-	height:20px;
+	height:1.3em;
 }
 QCheckBox{
 	margin:2px;
@@ -31,11 +31,17 @@ QTabBar::tab{
 	border:none;
 	padding:5px;
 	margin:4px;
-	height:15px;
+	height:1.1em;
 }
 QTabBar::tab:hover{
 	color:#555555;
 }
 QTabBar::tab:selected{
 	border-bottom:2px solid blue;
+}
+#HangUpTD,#GBWindowed{
+	max-width:4em;
+}
+#KillTD,#EnableTDBar{
+	max-width:6em;
 }
