@@ -1,22 +1,26 @@
-VERSION="b1.5"
+VERSION="b1.6"
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon,QPixmap
 from PyQt5.QtCore import Qt,QObject,pyqtSignal,QTimer,QEvent,QCoreApplication
-from Ui_NTD import *
+from libs.Ui_NTD import *
+from libs.feedback import *
 from win32api import *
 from win32con import *
 from win32gui import *
+from win32print import *
 from win32process import *
 from win32gui_struct import *
 from ctypes import *
 from ctypes.wintypes import *
-from system_hotkey import SystemHotkey
+from libs.system_hotkey import SystemHotkey
 from threading import *
-import sys,os,psutil,subprocess,b64,base64,random,webbrowser,hashlib,json,hashlib
+import sys,os,psutil,subprocess,base64,random,hashlib,json
+from libs import b64
 class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     sw=pyqtSignal()
     st=pyqtSignal()
     top=pyqtSignal()
+    kf=pyqtSignal()
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -29,12 +33,18 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     def setup(self):
         self.setWindowTitle("NoTopDomain %s By LYX"%VERSION)
         self.st.connect(self.startTSK)
+        self.kf.connect(self.killFocus)
         self.top.connect(self.setTop)
         try:
-            reg=RegOpenKeyEx(HKEY_LOCAL_MACHINE, 'SOFTWARE\\WOW6432Node\\TopDomain\\e-Learning Class Standard\\1.00',0,KEY_ALL_ACCESS)
+            reg=RegOpenKeyEx(HKEY_LOCAL_MACHINE,'SOFTWARE\\WOW6432Node\\TopDomain\\e-Learning Class Standard\\1.00',0,KEY_ALL_ACCESS)
             self.location=RegQueryValueEx(reg,"TargetDirectory")[0]
         except:
-            self.location="/usr/bin/"
+            try:
+                reg=RegOpenKeyEx(HKEY_LOCAL_MACHINE,'SOFTWARE\\TopDomain\\e-Learning Class Standard\\1.00',0,KEY_ALL_ACCESS)
+                self.location=RegQueryValueEx(reg,"TargetDirectory")[0]
+            except:
+                self.location="/aa/bb/"
+                self.CopyLink.setDisabled(1)
         try:
             if "Shutdown_back.exe" in os.listdir(self.location):
                 self.NoShutdown.setCheckState(Qt.Checked)
@@ -45,15 +55,23 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             if hwnd and hwnd!=int(self.winId()):
                 SetForegroundWindow(hwnd)
                 if not IsWindowVisible(hwnd):
-                    keybd_event(18,0,0,0)
-                    keybd_event(77,0,0,0)
-                    keybd_event(77,0,KEYEVENTF_KEYUP,0)
-                    keybd_event(18,0,KEYEVENTF_KEYUP,0)
+                    try:
+                        sg=self.config.get("AcWindow").split('+')
+                        for i in sg:
+                            keybd_event(b64.key[i],0,0,0)
+                        sg.reverse()
+                        for i in sg:
+                            keybd_event(b64.key[i],0,KEYEVENTF_KEYUP,0)
+                    except:
+                        keybd_event(18,0,0,0)
+                        keybd_event(77,0,0,0)
+                        keybd_event(77,0,KEYEVENTF_KEYUP,0)
+                        keybd_event(18,0,KEYEVENTF_KEYUP,0)
                 self.close()
         except:
             pass
         try:
-            reg=RegOpenKeyEx(HKEY_CURRENT_USER, r'SOFTWARE\Policies\Microsoft\Windows\System',0,KEY_ALL_ACCESS)
+            reg=RegOpenKeyEx(HKEY_CURRENT_USER,r'SOFTWARE\Policies\Microsoft\Windows\System',0,KEY_ALL_ACCESS)
             RegSetValueEx(reg,"DisableCMD",0,REG_DWORD,0)
             reg.Close()
         except:
@@ -62,6 +80,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.setGeometry(100,100,self.width(),self.height())
         self.TDState=1
         self.HangState=1
+        self.CopyLink.clicked.connect(self.copyLink)
         self.ttimer=QTimer()
         self.icon=QPixmap()
         self.icon.loadFromData(base64.b64decode(b64.icon))
@@ -71,22 +90,23 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.zb.setInterval(random.randint(200,3000))
         self.zb.timeout.connect(self.ZB)
         self.zb.start()
-        if not self.config.get("QssDisabled"):
-            self.setStyleSheet(b64.qss)
-        self.EnableTDBar.clicked.connect(self.enableBar)
+        self.fb=Feedbacker()
+        SetWindowPos(self.fb.winId(),HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE)
         self.Stasis=QLabel()
         self.UnlockTDHook.clicked.connect(self.unHook)
+        if not self.config.get("QssDisabled"):
+            self.setStyleSheet(b64.qss)
         self.WebsiteYes.clicked.connect(lambda:Thread(target=self.websiteYes).start())
         self.hk=SystemHotkey()
         try:
             self.hk.register(['control' if i=='ctrl' else i for i in self.config.get("AcWindow").split("+")],callback=lambda _:self.sw.emit())
-            self.hk.register(['control' if i=='ctrl' else i for i in self.config.get("KillWindow").split("+")],callback=lambda _:self.killFocus())
+            self.hk.register(['control' if i=='ctrl' else i for i in self.config.get("KillWindow").split("+")],callback=lambda _:self.kf.emit())
             self.hk.register(['control' if i=='ctrl' else i for i in self.config.get("StartTSK").split("+")],callback=lambda _:self.st.emit())
             self.hk.register(['control' if i=='ctrl' else i for i in self.config.get("TopWindow").split("+")],callback=lambda _:self.top.emit())
         except:
             try:
                 self.hk.register(("alt","m"),callback=lambda _:self.sw.emit())
-                self.hk.register(("alt","k"),callback=lambda _:self.killFocus())
+                self.hk.register(("alt","k"),callback=lambda _:self.kf.emit())
                 self.hk.register(("alt","t"),callback=lambda _:self.st.emit())
                 self.hk.register(("alt","y"),callback=lambda _:self.top.emit())
             except:
@@ -103,6 +123,12 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.action_2=QAction("帮助")
         self.action_3=QAction("启动TSK")
         self.feedback=QAction("反馈")
+        self.topLabel=QLabel("")
+        self.topLabel.setWindowFlag(Qt.SplashScreen)
+        self.topLabel.setStyleSheet("padding:5px;background:white;border:1px solid;border-radius:3px")
+        self.tltimer=QTimer()
+        self.tltimer.setInterval(2000)
+        self.tltimer.timeout.connect(self.hidelb)
         self.checkBox.clicked.connect(self.reTrayState)
         self.menubar.addActions([self.action_2,self.feedback,self.action_1,self.action_3])
         self.action_1.triggered.connect(self.showAbout)
@@ -131,7 +157,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.IamTop.clicked.connect(self.toTop)
         self.NoShutdown.clicked.connect(self.noShutDown)
         self.KillSome.setMaximumWidth(100)
-        self.KillSome.textChanged.connect(lambda:self.KillCurrent.setEnabled(1) if "exe" in self.KillSome.text() or self.KillSome.text().isdigit() else self.KillCurrent.setEnabled(0))
+        # self.KillSome.textChanged.connect(lambda:self.KillCurrent.setEnabled(1) if "exe" in self.KillSome.text() or self.KillSome.text().isdigit() else self.KillCurrent.setEnabled(0))
         self.KillCurrent.clicked.connect(self.killCurrent)
         self.Stasis.st=self.Stasis.setText
         self.Stasis.setText=self.Stasis.st
@@ -153,10 +179,28 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         try:
             if pid.status()=="stopped":
                 self.HangState=0
-                self.HangUpTD.setText("恢复极域")
+                self.HangUpTD.setText("启动极域")
                 self.KillTD.setEnabled(False)
         except:
             self.KillTD.setEnabled(True)
+
+    def getRealResolution(self):
+        hDC=GetDC(0)
+        wide=GetDeviceCaps(hDC,DESKTOPHORZRES)
+        high=GetDeviceCaps(hDC,DESKTOPVERTRES)
+        return {"wide":wide,"high":high}
+    def getScreenSize(self):
+        wide=GetSystemMetrics(0)
+        high=GetSystemMetrics(1)
+        return {"wide":wide,"high":high}
+    def getScaling(self):
+        realResolution=self.getRealResolution()
+        screenSize=self.getScreenSize()
+        proportion=round(realResolution['wide']/screenSize['wide'],2)
+        return proportion
+    def hidelb(self):
+        self.topLabel.hide()
+        self.tltimer.stop()
     def unRemoteControl(self):
         if self.NoControl.isChecked():
             try:
@@ -267,7 +311,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             mii,_=EmptyMENUITEMINFO()
             GetMenuItemInfo(hm,0x7704,False,mii)
             if(not (UnpackMENUITEMINFO(mii)[1] & MFS_CHECKED)):
-                PostMessage(hwnd, WM_COMMAND, 0x7704, 0)
+                PostMessage(hwnd,WM_COMMAND,0x7704,0)
             self.Stasis.setText("启动并勾选置顶任务管理器，完毕")
         except:
             try:
@@ -287,6 +331,9 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                 EnumWindows(self.cb2,0)
         except:
             self.Stasis.setText("解禁失败")
+    def copyLink(self):
+        subprocess.run("echo "+self.location+" | clip",shell=True)
+        self.Stasis.setText("复制链接成功")
     def cb2(self,hwnd,lParam):
         if "正在共享屏幕" in GetWindowText(hwnd):
             self.h=hwnd
@@ -297,7 +344,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         hmenu=GetMenu(hwndChild)
         if LOWORD(hmenu)==1004:
             if not IsWindowEnabled(hwndChild):
-                EnableWindow(hwndChild, TRUE)
+                EnableWindow(hwndChild,TRUE)
                 if self.config.get("AutoCommand"):
                     if GetWindowRect(self.h)==GetWindowRect(GetDesktopWindow()):
                         # PostMessage(hwndChild,WM_COMMAND,WPARAM((BM_CLICK<<16)|1004),NULL)
@@ -324,10 +371,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                         g=GetWindowRect(hwndChild)
                         SetCursorPos((g[0]+10,g[1]+10))
                         mouse_event(MOUSEEVENTF_LEFTDOWN|MOUSEEVENTF_ABSOLUTE,0,0)
-                        Sleep(100)
+                        Sleep(200)
                         mouse_event(MOUSEEVENTF_LEFTUP|MOUSEEVENTF_ABSOLUTE,0,0)
                         SetCursorPos((x,y))
-                EnableWindow(hwndChild, FALSE)
+                EnableWindow(hwndChild,FALSE)
                 self.GBWindowed.setText("解冻全屏")
                 self.Stasis.setText("禁用按钮成功")
                 return 0
@@ -388,7 +435,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             self.Stasis.setText("保存成功（重启生效）")
         except:
             self.Stasis.setText("保存失败")
-    def closeEvent(self, event):
+    def closeEvent(self,event):
         event.accept()
         try:
             self.tray.hide()
@@ -397,10 +444,17 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         os._exit(0)
     def killFocus(self):
         if not self.isActiveWindow():
-            pid=GetWindowThreadProcessId(GetForegroundWindow())[1]
-            handle=OpenProcess(PROCESS_TERMINATE,0,pid)
-            TerminateProcess(handle,0)
-            self.Stasis.setText("已经杀掉焦点窗口，pid："+str(pid))
+            try:
+                pid=GetWindowThreadProcessId(GetForegroundWindow())[1]
+                if QMessageBox.question(self,"提示","确定要杀掉焦点进程吗？\npid："+str(pid))==16384:
+                    handle=OpenProcess(PROCESS_TERMINATE,0,pid)
+                    TerminateProcess(handle,0)
+                    self.Stasis.setText("已经杀掉焦点窗口，pid："+str(pid))
+                if self.isHidden():
+                    self.showNormal()
+                    self.hide()
+            except:
+                self.Stasis.setText("未发现杀掉窗口对象")
         else:
             self.Stasis.setText("触发进程保护...")
     def enableTools(self):
@@ -408,7 +462,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         try:
             flag=0
             fails=[]
-            reg=RegOpenKeyEx(HKEY_CURRENT_USER, r'SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System',0,KEY_ALL_ACCESS)
+            reg=RegOpenKeyEx(HKEY_CURRENT_USER,r'SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System',0,KEY_ALL_ACCESS)
             dises=["DisableChangePassword","DisableRegistryTools","DisableSwitchUserOption","DisableTaskMgr"]
             for i in dises:
                 try:
@@ -417,7 +471,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                     flag=1
                     fails.append(i)
             reg.Close()
-            reg=RegOpenKeyEx(HKEY_CURRENT_USER, r'SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer',0,KEY_ALL_ACCESS)
+            reg=RegOpenKeyEx(HKEY_CURRENT_USER,r'SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer',0,KEY_ALL_ACCESS)
             dises=["NoDriveTypeAutoRun","NoLogOff","NoRun","StartMenuLogOff"]
             for i in dises:
                 try:
@@ -443,15 +497,15 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         s=QMessageBox.question(self,"警告","重置映像劫持不可逆，是否继续？")
         if(s==16384):
             try:
-                reg=RegOpenKeyEx(HKEY_LOCAL_MACHINE, r'SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options',0,KEY_ALL_ACCESS)
+                reg=RegOpenKeyEx(HKEY_LOCAL_MACHINE,r'SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options',0,KEY_ALL_ACCESS)
                 for item in RegEnumKeyEx(reg):
                     try:
-                        r=RegOpenKeyEx(HKEY_LOCAL_MACHINE, r'SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\\'+item[0],0,KEY_ALL_ACCESS)
+                        r=RegOpenKeyEx(HKEY_LOCAL_MACHINE,r'SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\\'+item[0],0,KEY_ALL_ACCESS)
                         RegQueryValueEx(r,"debugger")
                     except:
                         pass
                     else:
-                        RegDeleteKey(RegOpenKeyEx(HKEY_LOCAL_MACHINE, r'SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options',0,KEY_ALL_ACCESS),item[0])
+                        RegDeleteKey(RegOpenKeyEx(HKEY_LOCAL_MACHINE,r'SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options',0,KEY_ALL_ACCESS),item[0])
                         r.Close()
                 self.Stasis.setText("解除成功")
             except:
@@ -461,7 +515,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     def ZB(self):
         self.zb.stop()
         # s=[]
-        # retKey=RegOpenKeyEx(HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\TopDomain\e-Learning Class\Student", 0, KEY_ALL_ACCESS)
+        # retKey=RegOpenKeyEx(HKEY_LOCAL_MACHINE,r"SOFTWARE\WOW6432Node\TopDomain\e-Learning Class\Student",0,KEY_ALL_ACCESS)
         # retKeyVal=[(ord(i)-ord("a")+10 if i>="a" else int(i)) for i in hex(int.from_bytes(RegQueryValueEx(retKey,"Knock")[0]))[2:]]
         # RegCloseKey(retKey)
         # nSize=len(retKeyVal)
@@ -494,7 +548,9 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
 
 5.可以通过挂起极域来在教师端伪装连接。（亲测可行）
 
-6.设置一定要保存！除了快捷键以外保存设置都不需要重启。"""%(self.config.get("AcWindow").upper(),self.config.get("KillWindow").upper(),self.config.get("StartTSK").upper(),self.config.get("TopWindow").upper()))
+6.设置一定要保存！除了快捷键以外保存设置都不需要重启。
+
+7.遇到怪异且难以下手的极域？输入超级密码mythware_super_password往往能解决问题"""%(self.config.get("AcWindow").upper(),self.config.get("KillWindow").upper(),self.config.get("StartTSK").upper(),self.config.get("TopWindow").upper()))
         except:
             QMessageBox.information(self,'帮助',"""1.ALT+M唤起软件，ALT+K杀死焦点进程（有保护），ALT+T启动任务管理器，ALT+Y切换窗口置顶状态
 
@@ -506,20 +562,28 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
 
 5.可以通过挂起极域来在教师端伪装连接。（亲测可行）
 
-6.设置一定要保存！除了快捷键以外保存设置都不需要重启。""")
+6.设置一定要保存！除了快捷键以外保存设置都不需要重启。
+
+7.遇到怪异且难以下手的极域？输入超级密码mythware_super_password往往能解决问题""")
     def killCurrent(self):
         try:
             if self.KillSome.text().isdigit():
                 handle=OpenProcess(PROCESS_TERMINATE,0,int(self.KillSome.text()))
                 TerminateProcess(handle,0)
             else:
+                flag=0
                 pids=psutil.process_iter()
                 for p in pids:
-                    if p.name().lower()==self.KillSome.text():
+                    if p.name().lower()==self.KillSome.text() or p.name().lower()==self.KillSome.text()+".exe":
                         handle=OpenProcess(PROCESS_TERMINATE,0,p.pid)
                         TerminateProcess(handle,0)
-            self.Stasis.setText("执行成功")
+                        self.Stasis.setText("执行成功")
+                        flag=1
+                if flag:
+                    return
         except:
+            self.Stasis.setText("杀进程失败，检查进程名？")
+        else:
             self.Stasis.setText("杀进程失败，检查进程名？")
     def noShutDown(self):
         if self.NoShutdown.isChecked():
@@ -562,19 +626,28 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             except:
                 self.Stasis.setText("恢复禁网失败")
     def Feedback(self):
-        QMessageBox.information(self,"提示","请前往Github提交issue<br><a href=\"https://www.w3.org/International/i18n-activity/guidelines/issues.zh-hans.html\">怎么用Github的issue？</a>")
-        webbrowser.open("https://github.com/lyxofficial/notopdomain/issues")
+        self.fb.show()
     def setTop(self):
-        if self.isActiveWindow():      
+        if self.isActiveWindow() or self.topLabel.isActiveWindow():     
             self.Stasis.setText("触发进程保护...")
             return
         hwnd=GetForegroundWindow()
-        if not GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_TOPMOST:
+        if not GetWindowLong(hwnd,GWL_EXSTYLE) & WS_EX_TOPMOST:
+            self.topLabel.setText("置顶窗口")
+            self.topLabel.show()
             SetWindowPos(hwnd,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE)
-            self.Stasis.setText("置顶选中窗口成功，hwnd: %d"%hwnd)
+            x,y,_,__=GetWindowRect(hwnd)
+            SetWindowPos(self.topLabel.winId(),HWND_TOPMOST,x+10,y+10,0,0,SWP_NOSIZE)
+            self.tltimer.start()
+            self.Stasis.setText("置顶选中窗口成功，hwnd:%d"%hwnd)
         else:
+            self.topLabel.setText("取消置顶")
+            self.topLabel.show()
             SetWindowPos(hwnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE)
-            self.Stasis.setText("取消置顶选中窗口，hwnd: %d"%hwnd)
+            x,y,_,__=GetWindowRect(hwnd)
+            SetWindowPos(self.topLabel.winId(),HWND_TOPMOST,x+10,y+10,0,0,SWP_NOSIZE)
+            self.tltimer.start()
+            self.Stasis.setText("取消置顶选中窗口，hwnd:%d"%hwnd)
     def nbs(self):
         global flag3
         if flag3:
@@ -619,7 +692,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                 pid.suspend()
                 self.Stasis.setText("挂起成功")
                 self.HangState=0
-                self.HangUpTD.setText("恢复极域")
+                self.HangUpTD.setText("启动极域")
                 self.KillTD.setEnabled(False)
             except:
                 self.Stasis.setText("挂起失败")
@@ -661,7 +734,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                 self.HangUpTD.setText("挂起极域")
             except:
                 self.Stasis.setText("获取地址失败（未安装？）")
-    def changeEvent(self, event):
+    def changeEvent(self,event):
         if event.type() == QEvent.WindowStateChange:
             if self.windowState() & Qt.WindowMinimized:
                 event.ignore()
@@ -717,13 +790,13 @@ class setState(Thread):
                 if s:
                     window.StudentRunning.setText("极域：<span style=\"color:green\">未运行</span>")
                     window.HangUpTD.setEnabled(False)
-                    window.EnableTDBar.setEnabled(False)
+                    # window.EnableTDBar.setEnabled(False)
                     window.TDState=0
-                    window.KillTD.setText("恢复极域！！")
+                    window.KillTD.setText("启动极域！！")
                 else:
-                    window.StudentRunning.setText("极域：<span style=\"color:orange\">运行中</span> <span style=\"color:gray\">PID: %s</span>"%pid)
+                    window.StudentRunning.setText("极域：<span style=\"color:orange\">运行中</span> <span style=\"color:gray\">PID:%s</span>"%pid)
                     window.HangUpTD.setEnabled(True)
-                    window.EnableTDBar.setEnabled(True)
+                    # window.EnableTDBar.setEnabled(True)
                     window.TDState=1
                     window.KillTD.setText("杀掉极域！！")
                     window.HangState=1
@@ -784,15 +857,15 @@ class NoBlackScreen(Thread):
                 if hwnd:
                     SetWindowPos(hwnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE|SWP_SHOWWINDOW)
             Sleep(500)
-def fileHash(file_path:str, hash_method) -> str:
+def fileHash(file_path:str,hash_method) -> str:
     if not os.path.exists(file_path):
         return ""
-    h = hash_method()
+    h=hash_method()
     with open(file_path,'rb') as f:
         while b:=f.read(8192):
             h.update(b)
     return h.hexdigest()
-def filesha1(file_path: str) -> str:
+def filesha1(file_path:str) -> str:
     return fileHash(file_path,hashlib.sha1)
 if __name__=="__main__":
     QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)

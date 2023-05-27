@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>413</width>
-    <height>446</height>
+    <width>340</width>
+    <height>376</height>
    </rect>
   </property>
   <property name="font">
@@ -58,6 +58,58 @@
         <property name="bottomMargin">
          <number>5</number>
         </property>
+        <item row="0" column="3">
+         <widget class="QLabel" name="label_5">
+          <property name="maximumSize">
+           <size>
+            <width>40</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="StudentRunning">
+          <property name="text">
+           <string>极域：&lt;span style=&quot;color:grey&quot;&gt;检测中&lt;/span&gt;</string>
+          </property>
+          <property name="margin">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="GBing">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>广播：&lt;span style=&quot;color:grey&quot;&gt;检测中&lt;/span&gt;</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="margin">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_6">
+          <property name="maximumSize">
+           <size>
+            <width>20</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
         <item row="2" column="0" colspan="4">
          <widget class="QGroupBox" name="groupBox_2">
           <property name="title">
@@ -151,58 +203,6 @@
           </layout>
          </widget>
         </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="GBing">
-          <property name="layoutDirection">
-           <enum>Qt::LeftToRight</enum>
-          </property>
-          <property name="text">
-           <string>广播：&lt;span style=&quot;color:grey&quot;&gt;检测中&lt;/span&gt;</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-          <property name="margin">
-           <number>0</number>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="StudentRunning">
-          <property name="text">
-           <string>极域：&lt;span style=&quot;color:grey&quot;&gt;检测中&lt;/span&gt;</string>
-          </property>
-          <property name="margin">
-           <number>0</number>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QLabel" name="label_5">
-          <property name="maximumSize">
-           <size>
-            <width>40</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_6">
-          <property name="maximumSize">
-           <size>
-            <width>20</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="0" colspan="4">
          <widget class="QGroupBox" name="groupBox">
           <property name="title">
@@ -256,27 +256,8 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QPushButton" name="EnableTDBar">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>解禁工具栏</string>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="0">
             <widget class="QPushButton" name="KillTD">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
              <property name="minimumSize">
               <size>
                <width>100</width>
@@ -291,7 +272,7 @@
            <item row="0" column="2">
             <widget class="QPushButton" name="KillCurrent">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="text">
               <string>杀掉进程↓</string>
@@ -326,17 +307,17 @@
              </property>
             </widget>
            </item>
+           <item row="1" column="0">
+            <widget class="QPushButton" name="CopyLink">
+             <property name="text">
+              <string>复制极域链接</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QPushButton" name="UninstallTopDomain">
-          <property name="text">
-           <string>卸载极域</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="2">
          <widget class="QLineEdit" name="TDPasswd">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -349,6 +330,13 @@
           </property>
           <property name="placeholderText">
            <string>尝试获取密码...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QPushButton" name="UninstallTopDomain">
+          <property name="text">
+           <string>卸载极域</string>
           </property>
          </widget>
         </item>
@@ -474,8 +462,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>413</width>
-     <height>26</height>
+     <width>340</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>

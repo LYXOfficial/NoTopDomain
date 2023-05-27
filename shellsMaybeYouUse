@@ -1,5 +1,5 @@
-//使用Nuitka打包程序
-nuitka NoTopDomain.py --mingw64 --standalone --enable-plugin=pyqt5 --follow-import-to=pyqt5,sys,os,psutil,subprocess,b64,base64,random,webbrowser,math,json,hashlib,threading,win32api,win32con,win32gui,win32gui_struct,win32process,ctypes,Ui_NTD,system_hotkey  --windows-icon-from-ico=app.ico --onefile --nofollow-imports --windows-disable-console
-//编译C++工具包动态链接库
+# 使用Nuitka打包程序
+nuitka NoTopDomain.py --mingw64 --standalone --windows-uac-admin --windows-uac-uiaccess --enable-plugin=pyqt5 --windows-icon-from-ico=app.ico --onefile --nofollow-imports --windows-disable-console
+# 编译C++工具包动态链接库
 g++ -std=c++14 -o2 NTDTools.cpp -shared -o -s NTDTools.dll
 g++ -std=c++14 -o2 NTDTools.cpp -m32 -shared -o -s NTDTools32.dll
