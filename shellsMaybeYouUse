@@ -1,5 +1,6 @@
-# 使用Nuitka打包程序
-nuitka NoTopDomain.py --mingw64 --standalone --windows-uac-admin --windows-uac-uiaccess --enable-plugin=pyqt5 --windows-icon-from-ico=app.ico --onefile --nofollow-imports --windows-disable-console
-# 编译C++工具包动态链接库
-g++ -std=c++14 -o2 NTDTools.cpp -shared -o -s NTDTools.dll
-g++ -std=c++14 -o2 NTDTools.cpp -m32 -shared -o -s NTDTools32.dll
+nuitka NoTopDomain.py --mingw64 --standalone --windows-uac-admin --enable-plugin=pyqt5 --windows-icon-from-ico=app.ico --onefile --nofollow-imports --windows-disable-console
+# 编译C++工具包动态链接库（DLL）
+g++ -std=c++14 ./libs/NTDTools.cpp -shared -o NTDTools.dll -s
+g++ -std=c++14 ./libs/NTDTools.cpp -m32 -shared -o NTDTools32.dll -s
+# 编译UIAccess提权工具（EXE）（mingw64部分版本会出错（ld的sysroot），建议使用TDM-GCC MSVC或mingw10.0+）
+g++ -std=c++14 ./libs/NTDUIALoader.cpp -s -m32 -static-libgcc -o NTDUIALoader.exe -mwindows

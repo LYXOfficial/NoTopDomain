@@ -1,9 +1,14 @@
-VERSION="b1.6"
+import os,sys
+from json import *
+from base64 import *
+from random import *
+from psutil import *
+from hashlib import *
+from threading import *
+from subprocess import *
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QIcon,QPixmap
-from PyQt5.QtCore import Qt,QObject,pyqtSignal,QTimer,QEvent,QCoreApplication
-from libs.Ui_NTD import *
-from libs.feedback import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from win32api import *
 from win32con import *
 from win32gui import *
@@ -12,10 +17,14 @@ from win32process import *
 from win32gui_struct import *
 from ctypes import *
 from ctypes.wintypes import *
-from libs.system_hotkey import SystemHotkey
-from threading import *
-import sys,os,psutil,subprocess,base64,random,hashlib,json
-from libs import b64
+from libs.b64 import *
+from libs.Ui_NTD import *
+from libs.feedback import *
+from libs.system_hotkey import *
+
+VERSION="b1.7"
+DEBUG=FALSE
+
 class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     sw=pyqtSignal()
     st=pyqtSignal()
@@ -58,10 +67,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                     try:
                         sg=self.config.get("AcWindow").split('+')
                         for i in sg:
-                            keybd_event(b64.key[i],0,0,0)
+                            keybd_event(key[i],0,0,0)
                         sg.reverse()
                         for i in sg:
-                            keybd_event(b64.key[i],0,KEYEVENTF_KEYUP,0)
+                            keybd_event(key[i],0,KEYEVENTF_KEYUP,0)
                     except:
                         keybd_event(18,0,0,0)
                         keybd_event(77,0,0,0)
@@ -83,11 +92,11 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.CopyLink.clicked.connect(self.copyLink)
         self.ttimer=QTimer()
         self.icon=QPixmap()
-        self.icon.loadFromData(base64.b64decode(b64.icon))
+        self.icon.loadFromData(b64decode(icon))
         self.reStart.clicked.connect(self.restart)
         self.setWindowIcon(QIcon(self.icon))
         self.zb=QTimer()
-        self.zb.setInterval(random.randint(200,3000))
+        self.zb.setInterval(randint(200,3000))
         self.zb.timeout.connect(self.ZB)
         self.zb.start()
         self.fb=Feedbacker()
@@ -95,7 +104,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.Stasis=QLabel()
         self.UnlockTDHook.clicked.connect(self.unHook)
         if not self.config.get("QssDisabled"):
-            self.setStyleSheet(b64.qss)
+            self.setStyleSheet(base64.b64decode(qss).decode())
         self.WebsiteYes.clicked.connect(lambda:Thread(target=self.websiteYes).start())
         self.hk=SystemHotkey()
         try:
@@ -113,10 +122,12 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                 self.Stasis.setText("热键注册失败，请尝试更改配置")
         else:
             global ff
-            if ff:
+            if ff==1:
                 self.Stasis.setText("加载工具DLL失败，部分功能受影响")
+            elif ff==2:
+                self.Stasis.setText("等待操作...(检测到已开启UAC，建议查看帮助)")
             else:
-                self.Stasis.setText("等待操作...(初次使用建议查看帮助)")
+                self.Stasis.setText("等待操作...(建议查看帮助)")
         self.sw.connect(self.showWindow)
         self.GBWindowed.clicked.connect(self.EnableFullScreen)
         self.action_1=QAction("关于")
@@ -125,7 +136,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.feedback=QAction("反馈")
         self.topLabel=QLabel("")
         self.topLabel.setWindowFlag(Qt.SplashScreen)
-        self.topLabel.setStyleSheet("padding:5px;background:white;border:1px solid;border-radius:3px")
+        self.topLabel.setStyleSheet("font-family:\"Microsoft YaHei UI Light\";padding:5px;background:white;border:1px solid;border-radius:3px")
         self.tltimer=QTimer()
         self.tltimer.setInterval(2000)
         self.tltimer.timeout.connect(self.hidelb)
@@ -157,7 +168,6 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.IamTop.clicked.connect(self.toTop)
         self.NoShutdown.clicked.connect(self.noShutDown)
         self.KillSome.setMaximumWidth(100)
-        # self.KillSome.textChanged.connect(lambda:self.KillCurrent.setEnabled(1) if "exe" in self.KillSome.text() or self.KillSome.text().isdigit() else self.KillCurrent.setEnabled(0))
         self.KillCurrent.clicked.connect(self.killCurrent)
         self.Stasis.st=self.Stasis.setText
         self.Stasis.setText=self.Stasis.st
@@ -171,10 +181,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.USBYes.clicked.connect(lambda:Thread(target=self.usbYes).start())
         self.tray.activated.connect(self.activate)
         SetWindowPos(self.winId(),HWND_TOPMOST,self.x(),self.y(),self.width(),self.height(),SWP_NOSIZE|SWP_NOZORDER)
-        pids=psutil.process_iter()
+        pids=process_iter()
         for p in pids:
             if(p.name().lower()=="studentmain.exe"):
-                pid=psutil.Process(p.pid)
+                pid=Process(p.pid)
                 break
         try:
             if pid.status()=="stopped":
@@ -183,21 +193,30 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                 self.KillTD.setEnabled(False)
         except:
             self.KillTD.setEnabled(True)
-
-    def getRealResolution(self):
-        hDC=GetDC(0)
-        wide=GetDeviceCaps(hDC,DESKTOPHORZRES)
-        high=GetDeviceCaps(hDC,DESKTOPVERTRES)
-        return {"wide":wide,"high":high}
-    def getScreenSize(self):
-        wide=GetSystemMetrics(0)
-        high=GetSystemMetrics(1)
-        return {"wide":wide,"high":high}
-    def getScaling(self):
-        realResolution=self.getRealResolution()
-        screenSize=self.getScreenSize()
-        proportion=round(realResolution['wide']/screenSize['wide'],2)
-        return proportion
+        if self.config.get("UseNTSD"):
+            if os.path.exists(os.getenv("temp")+"\\ntsd.exe"):
+                self.ntsd=os.getenv("temp")+"\\ntsd.exe"
+            else:
+                with open(os.getenv("temp")+"\\ntsd.exe","wb") as f:
+                    f.write(b64decode(self.ntsd))
+                self.ntsd=os.getenv("temp")+"\\ntsd.exe"
+        self.startupinfo = STARTUPINFO()
+        self.startupinfo.wShowWindow = SW_HIDE
+    # def getRealResolution(self):
+    #     hDC=GetDC(0)
+    #     wide=GetDeviceCaps(hDC,DESKTOPHORZRES)
+    #     high=GetDeviceCaps(hDC,DESKTOPVERTRES)
+    #     return {"wide":wide,"high":high}
+    # def getScreenSize(self):
+    #     wide=GetSystemMetrics(0)
+    #     high=GetSystemMetrics(1)
+    #     return {"wide":wide,"high":high}
+    # def getScaling(self):
+    #     realResolution=self.getRealResolution()
+    #     screenSize=self.getScreenSize()
+    #     proportion=round(realResolution['wide']/screenSize['wide'],2)
+    #     return proportion
+    # 可能有用
     def hidelb(self):
         self.topLabel.hide()
         self.tltimer.stop()
@@ -213,11 +232,15 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                     FreeLibrary(hook)
                 except:
                     pass
-                pids=psutil.process_iter()
-                for p in pids:
-                    if p.name().lower()=="gatesrv.exe" or p.name().lower()=="masterhelper.exe":
-                        handle=OpenProcess(PROCESS_TERMINATE,0,p.pid)
-                        TerminateProcess(handle,0)
+                if self.config.get("UseNTSD"):
+                    Popen(self.ntsd+" -c q -pn gatesrv.exe",shell=True,startupinfo=self.startupinfo)
+                    Popen(self.ntsd+" -c q -pn masterhelper.exe",shell=True,startupinfo=self.startupinfo)
+                else:
+                    pids=process_iter()
+                    for p in pids:
+                        if p.name().lower()=="gatesrv.exe" or p.name().lower()=="masterhelper.exe":
+                            handle=OpenProcess(PROCESS_TERMINATE,0,p.pid)
+                            TerminateProcess(handle,0)
                 self.Stasis.setText("拦截成功")
             except:
                 self.Stasis.setText("拦截失败")
@@ -234,13 +257,19 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         if self.UnlockTDHook.isChecked():
             if QMessageBox.question(self,"警告","可能导致程序闪退，是否继续？")==16384:
                 try:
-                    pids=psutil.process_iter()
-                    for p in pids:
-                        if p.name().lower()=="prochelper64.exe" or p.name().lower()=="prochelper32.exe":
-                            handle=OpenProcess(PROCESS_TERMINATE,0,p.pid)
-                            TerminateProcess(handle,0)
-                            self.Stasis.setText("解Hook成功")
-                            return
+                    if self.config.get("UseNTSD"):
+                        Popen(self.ntsd+" -c q -pn prochelper64.exe",shell=True,startupinfo=self.startupinfo)
+                        Popen(self.ntsd+" -c q -pn prochelper32.exe",shell=True,startupinfo=self.startupinfo)
+                        self.Stasis.setText("解Hook成功")
+                        return
+                    else:
+                        pids=process_iter()
+                        for p in pids:
+                            if p.name().lower()=="prochelper64.exe" or p.name().lower()=="prochelper32.exe":
+                                handle=OpenProcess(PROCESS_TERMINATE,0,p.pid)
+                                TerminateProcess(handle,0)
+                                self.Stasis.setText("解Hook成功")
+                                return
                     try:
                         hook=GetModuleHandle("LibTDProcHook64.dll")
                         FreeLibrary(hook)
@@ -272,7 +301,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             self.tray.show()
     def restart(self):
         os.chdir(bl)
-        subprocess.Popen(" ".join(psutil.Process(os.getpid()).cmdline()),shell=True)
+        Popen(" ".join(Process(os.getpid()).cmdline()),shell=True)
         self.close()
     def enableBar(self):
         try:
@@ -291,6 +320,8 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         if LOWORD(hmenu)==1004:
             if IsWindowEnabled(hwndChild):
                 self.GBWindowed.setText("禁用全屏")
+            else:
+                self.GBWindowed.setText("解冻全屏")
     def startTSK(self):
         os.startfile("taskmgr")
         QApplication.processEvents()
@@ -332,7 +363,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         except:
             self.Stasis.setText("解禁失败")
     def copyLink(self):
-        subprocess.run("echo "+self.location+" | clip",shell=True)
+        run("echo "+self.location+" | clip",shell=True)
         self.Stasis.setText("复制链接成功")
     def cb2(self,hwnd,lParam):
         if "正在共享屏幕" in GetWindowText(hwnd):
@@ -370,8 +401,9 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                         SetCursorPos((g[0]+10,g[1]+10))
                         g=GetWindowRect(hwndChild)
                         SetCursorPos((g[0]+10,g[1]+10))
+                        Sleep(50)
                         mouse_event(MOUSEEVENTF_LEFTDOWN|MOUSEEVENTF_ABSOLUTE,0,0)
-                        Sleep(200)
+                        Sleep(300)
                         mouse_event(MOUSEEVENTF_LEFTUP|MOUSEEVENTF_ABSOLUTE,0,0)
                         SetCursorPos((x,y))
                 EnableWindow(hwndChild,FALSE)
@@ -384,24 +416,32 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             try:
                 with open(os.getenv("temp")+"\\NTDConfig.json","r+") as f:
                     f.seek(0)
-                    self.config=json.load(f)
+                    self.config=load(f)
             except:
                 with open(os.getenv("temp")+"\\NTDConfig.json","w+") as f:
-                    self.config={"HideTrayIcon":0,"AutoCommand":0,"QssDisabled":0,"AcWindow":"alt+m","StartTSK":"alt+t","TopWindow":"alt+y","KillWindow":"alt+k"}
+                    self.config={"HideTrayIcon":False,"AutoCommand":False,
+                         "QssDisabled":False,"UseNTSD":False,
+                         "AcWindow":"alt+m","StartTSK":"alt+t",
+                         "TopWindow":"alt+y","KillWindow":"alt+k"}
                     f.seek(0)
-                    json.dump(self.config,f)
+                    dump(self.config,f)
             if self.config.get("HideTrayIcon"):
                 self.checkBox.click()
             if self.config.get("AutoCommand"):
                 self.checkBox_2.click()
             if self.config.get("QssDisabled"):
                 self.checkBox_3.click()
+            if self.config.get("UseNTSD"):
+                self.checkBox_4.click()
             self.showWindowHotKey.setText(self.config.get("AcWindow").upper())
             self.TSKHotKey.setText(self.config.get("StartTSK").upper())
             self.topFocusHotKey.setText(self.config.get("TopWindow").upper())
             self.killFocusHotKey.setText(self.config.get("KillWindow").upper())
         except:
-            self.config={"HideTrayIcon":0,"AutoCommand":0,"AcWindow":"alt+m","StartTSK":"alt+t","TopWindow":"alt+y","KillWindow":"alt+k"}
+            self.config={"HideTrayIcon":False,"AutoCommand":False,
+                         "QssDisabled":False,"UseNTSD":False,
+                         "AcWindow":"alt+m","StartTSK":"alt+t",
+                         "TopWindow":"alt+y","KillWindow":"alt+k"}
     def saveConfig(self):
         keys=("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w",
               "x","y","z","0","1","2","3","4","5","6","7","8","9","ctrl","alt","control","shift","esc",
@@ -426,12 +466,13 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             self.config["HideTrayIcon"]=self.checkBox.isChecked()
             self.config["AutoCommand"]=self.checkBox_2.isChecked()
             self.config["QssDisabled"]=self.checkBox_3.isChecked()
+            self.config["UseNTSD"]=self.checkBox_4.isChecked()
             self.config["AcWindow"]=self.showWindowHotKey.text().lower()
             self.config["StartTSK"]=self.TSKHotKey.text().lower()
             self.config["TopWindow"]=self.topFocusHotKey.text().lower()
             self.config["KillWindow"]=self.killFocusHotKey.text().lower()
             with open(os.getenv("temp")+"\\NTDConfig.json","w+") as f:
-                json.dump(self.config,f)
+                dump(self.config,f)
             self.Stasis.setText("保存成功（重启生效）")
         except:
             self.Stasis.setText("保存失败")
@@ -447,8 +488,11 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             try:
                 pid=GetWindowThreadProcessId(GetForegroundWindow())[1]
                 if QMessageBox.question(self,"提示","确定要杀掉焦点进程吗？\npid："+str(pid))==16384:
-                    handle=OpenProcess(PROCESS_TERMINATE,0,pid)
-                    TerminateProcess(handle,0)
+                    if self.config.get("UseNTSD"):
+                        Popen(self.ntsd+" -c q -p %d"%pid,shell=True,startupinfo=self.startupinfo)
+                    else:
+                        handle=OpenProcess(PROCESS_TERMINATE,0,pid)
+                        TerminateProcess(handle,0)
                     self.Stasis.setText("已经杀掉焦点窗口，pid："+str(pid))
                 if self.isHidden():
                     self.showNormal()
@@ -487,7 +531,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         except:
             self.Stasis.setText("解禁失败，请尝试以管理员权限启动")
     def restartExplorer(self):
-        pids=psutil.process_iter()
+        pids=process_iter()
         for p in pids:
             if(p.name().lower()=="explorer.exe"):
                 handle=OpenProcess(PROCESS_TERMINATE,0,p.pid)
@@ -531,8 +575,6 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         #             break
         # print("".join([chr(i+ord("0")) for i in s]))
         # # 完全不行）））
-
-        
         # self.TDPwd.setText("mythware_super_password")
         # 装X？不过原本的密码区改成启动任务栏了
         pass
@@ -540,7 +582,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         try:
             QMessageBox.information(self,'帮助',"""1.%s唤起软件，%s杀死焦点进程（有保护），%s启动任务管理器，%s切换窗口置顶状态
 
-2.因设计缺陷，在全屏时唤起后窗口会出现闪烁，属于正常现象
+2.如果开启UAC，软件会自动放弃获取UIAccess，这会降低窗口的置顶层级，所以在广播窗口化时会闪烁。
 
 3.若部分功能失败，不妨解除其它限制再试试？
 
@@ -548,13 +590,15 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
 
 5.可以通过挂起极域来在教师端伪装连接。（亲测可行）
 
-6.设置一定要保存！除了快捷键以外保存设置都不需要重启。
+6.使用 --forceuac 命令行来强制程序获取UIAccess（可能失败，无提示），使用 --nouac命令行来强制程序不获取UIAccess
 
-7.遇到怪异且难以下手的极域？输入超级密码mythware_super_password往往能解决问题"""%(self.config.get("AcWindow").upper(),self.config.get("KillWindow").upper(),self.config.get("StartTSK").upper(),self.config.get("TopWindow").upper()))
+7.设置一定要保存！除了快捷键以外保存设置都不需要重启。
+
+8.遇到怪异且难以下手的极域？输入超级密码mythware_super_password往往能解决问题"""%(self.config.get("AcWindow").upper(),self.config.get("KillWindow").upper(),self.config.get("StartTSK").upper(),self.config.get("TopWindow").upper()))
         except:
             QMessageBox.information(self,'帮助',"""1.ALT+M唤起软件，ALT+K杀死焦点进程（有保护），ALT+T启动任务管理器，ALT+Y切换窗口置顶状态
 
-2.因设计缺陷，在全屏时唤起后窗口会出现闪烁，属于正常现象
+2.如果开启UAC，软件会自动放弃获取UIAccess，这会降低窗口的置顶层级，所以在广播窗口化时会闪烁。
 
 3.若部分功能失败，不妨解除其它限制再试试？
 
@@ -562,25 +606,38 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
 
 5.可以通过挂起极域来在教师端伪装连接。（亲测可行）
 
-6.设置一定要保存！除了快捷键以外保存设置都不需要重启。
+6.使用 --forceuac 命令行来强制程序获取UIAccess（可能失败，无提示），使用 --nouac命令行来强制程序不获取UIAccess
 
-7.遇到怪异且难以下手的极域？输入超级密码mythware_super_password往往能解决问题""")
+7.设置一定要保存！除了快捷键以外保存设置都不需要重启。
+
+8.遇到怪异且难以下手的极域？输入超级密码mythware_super_password往往能解决问题""")
     def killCurrent(self):
         try:
             if self.KillSome.text().isdigit():
-                handle=OpenProcess(PROCESS_TERMINATE,0,int(self.KillSome.text()))
-                TerminateProcess(handle,0)
-            else:
-                flag=0
-                pids=psutil.process_iter()
-                for p in pids:
-                    if p.name().lower()==self.KillSome.text() or p.name().lower()==self.KillSome.text()+".exe":
-                        handle=OpenProcess(PROCESS_TERMINATE,0,p.pid)
-                        TerminateProcess(handle,0)
-                        self.Stasis.setText("执行成功")
-                        flag=1
-                if flag:
+                if self.config.get("UseNTSD"):
+                    Popen(self.ntsd+" -c q -p %s"%self.KillSome.text(),shell=True,startupinfo=self.startupinfo)
+                    self.Stasis.setText("执行成功")
                     return
+                else:
+                    handle=OpenProcess(PROCESS_TERMINATE,0,int(self.KillSome.text()))
+                    TerminateProcess(handle,0)
+                    return
+            else:
+                if self.config.get("UseNTSD"):
+                    Popen(self.ntsd+" -c q -pn %s"%(self.KillSome.text() if ".exe" in self.KillSome.text() else self.KillSome.text()+".exe"),shell=True,startupinfo=self.startupinfo)
+                    self.Stasis.setText("执行成功")
+                    return
+                else:
+                    flag=0
+                    pids=process_iter()
+                    for p in pids:
+                        if p.name().lower()==self.KillSome.text() or p.name().lower()==self.KillSome.text()+".exe":
+                            handle=OpenProcess(PROCESS_TERMINATE,0,p.pid)
+                            TerminateProcess(handle,0)
+                            self.Stasis.setText("执行成功")
+                            flag=1
+                    if flag:
+                        return
         except:
             self.Stasis.setText("杀进程失败，检查进程名？")
         else:
@@ -592,7 +649,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                     with open(self.location+"Shutdown_back.exe","wb+") as f2:
                         f2.write(f.read())
                     f.seek(0)
-                    f.write(base64.b64decode(b64.emptyexe))
+                    f.write(b64decode(emptyexe))
                 self.Stasis.setText("关机程序补丁注入成功")
             except:
                 self.Stasis.setText("注入失败，未找到极域")
@@ -608,20 +665,26 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     def websiteYes(self):
         if self.WebsiteYes.isChecked():
             try:
-                pids=psutil.process_iter()
-                for p in pids:
-                    if p.name().lower()=="gatesrv.exe" or p.name().lower()=="masterhelper.exe":
-                        handle=OpenProcess(PROCESS_TERMINATE,0,p.pid)
-                        TerminateProcess(handle,0)
-                subprocess.run("sc stop TDNetFilter",shell=True,stdout=subprocess.PIPE)
-                self.Stasis.setText("解禁网站成功")
+                if self.config.get("UseNTSD"):
+                    Popen(self.ntsd+" -c q -pn gatesrv.exe",shell=True,startupinfo=self.startupinfo)
+                    Popen(self.ntsd+" -c q -pn masterhelper.exe",shell=True,startupinfo=self.startupinfo)
+                    run("sc stop TDNetFilter",shell=True,stdout=PIPE)
+                    self.Stasis.setText("解禁网站成功")
+                else:
+                    pids=process_iter()
+                    for p in pids:
+                        if p.name().lower()=="gatesrv.exe" or p.name().lower()=="masterhelper.exe":
+                            handle=OpenProcess(PROCESS_TERMINATE,0,p.pid)
+                            TerminateProcess(handle,0)
+                    run("sc stop TDNetFilter",shell=True,stdout=PIPE)
+                    self.Stasis.setText("解禁网站成功")
             except:
                 self.Stasis.setText("解禁网站失败")
         else:
             try:
                 os.startfile(self.location+"gatesrv.exe")
                 os.startfile(self.location+"masterhelper.exe")
-                subprocess.run("sc start TDNetFilter",shell=True,stdout=subprocess.PIPE)
+                run("sc start TDNetFilter",shell=True,stdout=PIPE)
                 self.Stasis.setText("恢复禁网成功")
             except:
                 self.Stasis.setText("恢复禁网失败")
@@ -657,10 +720,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         flag3=not flag3
     def usbYes(self):
         if self.USBYes.isChecked():
-            subprocess.run("sc stop TDFileFilter",shell=True,stdout=subprocess.PIPE)
+            run("sc stop TDFileFilter",shell=True,stdout=PIPE)
             self.Stasis.setText("解禁USB成功")
         else:
-            subprocess.run("sc start TDFileFilter",shell=True,stdout=subprocess.PIPE)
+            run("sc start TDFileFilter",shell=True,stdout=PIPE)
             self.Stasis.setText("恢复USB成功") 
     def toTop(self):
         global flag
@@ -683,10 +746,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             self.Stasis.setText("恢复键盘锁成功")
     def hangTD(self):
         if self.HangState:
-            pids=psutil.process_iter()
+            pids=process_iter()
             for p in pids:
                 if(p.name().lower()=="studentmain.exe"):
-                    pid=psutil.Process(p.pid)
+                    pid=Process(p.pid)
                     break
             try:
                 pid.suspend()
@@ -697,10 +760,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             except:
                 self.Stasis.setText("挂起失败")
         else:
-            pids=psutil.process_iter()
+            pids=process_iter()
             for p in pids:
                 if(p.name().lower()=="studentmain.exe"):
-                    pid=psutil.Process(p.pid)
+                    pid=Process(p.pid)
                     break
             try:
                 pid.resume()
@@ -713,12 +776,15 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     def killTopDomain(self):
         if self.TDState:
             try:
-                pids=psutil.process_iter()
-                for p in pids:
-                    if p.name().lower()=="studentmain.exe":
-                        pid=p.pid
-                handle=OpenProcess(PROCESS_TERMINATE,0,pid)
-                TerminateProcess(handle,0)
+                if self.config.get("UseNTSD"):
+                    Popen(self.ntsd+" -c q -pn studentmain.exe",shell=True,startupinfo=self.startupinfo)
+                else:
+                    pids=process_iter()
+                    for p in pids:
+                        if p.name().lower()=="studentmain.exe":
+                            pid=p.pid
+                    handle=OpenProcess(PROCESS_TERMINATE,0,pid)
+                    TerminateProcess(handle,0)
                 self.Stasis.setText("成功杀掉极域")
                 self.TDState=0
                 self.KillTD.setText("启动极域！！")
@@ -772,7 +838,7 @@ class setState(Thread):
         super().__init__()
     def run(self):
         global flag3
-        pids=psutil.process_iter()
+        pids=process_iter()
         for p in pids:
             if(p.name().lower()=="studentmain.exe"):
                 window.TDState=0
@@ -782,7 +848,7 @@ class setState(Thread):
                 window.StudentRunning.setText("极域：<span style=\"color:red\">挂起中</span>")
             else:
                 pid,s=0,1
-                pids=psutil.process_iter()
+                pids=process_iter()
                 for p in pids:
                     if(p.name().lower()=="studentmain.exe"):
                         s,pid=0,p.pid
@@ -857,26 +923,25 @@ class NoBlackScreen(Thread):
                 if hwnd:
                     SetWindowPos(hwnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE|SWP_SHOWWINDOW)
             Sleep(500)
-def fileHash(file_path:str,hash_method) -> str:
-    if not os.path.exists(file_path):
-        return ""
-    h=hash_method()
-    with open(file_path,'rb') as f:
-        while b:=f.read(8192):
-            h.update(b)
-    return h.hexdigest()
-def filesha1(file_path:str) -> str:
-    return fileHash(file_path,hashlib.sha1)
-if __name__=="__main__":
-    QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
-    ff=0
+def loadToolDLL():
+    global ff,Tools
+    def fileHash(file_path:str,hash_method) -> str:
+        if not os.path.exists(file_path):
+            return ""
+        h=hash_method()
+        with open(file_path,'rb') as f:
+            while b:=f.read(8192):
+                h.update(b)
+        return h.hexdigest()
+    def filesha1(file_path:str) -> str:
+        return fileHash(file_path,sha1)
     try:
-        if filesha1(os.getenv("temp")+"\\NTDTools.dll")!=b64.sha1_dll:
+        if filesha1(os.getenv("temp")+"\\NTDTools.dll")!=sha1_dll:
             try:
                 with open(os.getenv("temp")+"\\NTDTools.dll","wb") as f:
-                    f.write(base64.b64decode(b64.tools64))
+                    f.write(b64decode(tools64))
                 with open(os.getenv("temp")+"\\NTDTools32.dll","wb") as f:
-                    f.write(base64.b64decode(b64.tools32))
+                    f.write(b64decode(tools32))
             except:
                 pass
         try:
@@ -885,7 +950,39 @@ if __name__=="__main__":
             Tools=CDLL(os.getenv("temp")+"\\NTDTools32.dll",winmode=0)
     except:
         ff=1
+def tryLoadUIA():
+    global ff,DEBUG
+    if DEBUG:
+        return
+    if not (Process(os.getpid()).cmdline()[-1]=="--uac" or Process(os.getpid()).cmdline()[-1]=="--nouac") or Process(os.getpid()).cmdline()[-1]=="--forceuac":
+        if Process(os.getpid()).cmdline()[-1]!="--forceuac":
+            try:
+                reg=RegOpenKeyEx(HKEY_LOCAL_MACHINE,'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System',0,KEY_ALL_ACCESS)
+                if RegQueryValueEx(reg,"EnableLUA")[0]:
+                    ff=2
+                    return 
+            except:
+                ff=2
+                return
+        try:
+            with open(os.getenv("systemroot")+"\\Temp\\NTDUIATemp.tmp","w+") as f:
+                p=Process(os.getpid()).cmdline()
+                if "python" in p[0]:
+                    p[1]=os.getcwd()+"\\"+p[1]
+                f.write(" ".join(p))
+            if not os.path.exists(os.getenv("temp")+"\\NTDUIALoader.exe"):
+                with open(os.getenv("temp")+"\\NTDUIALoader.exe","wb") as f:
+                    f.write(base64.b64decode(uia))
+        except:
+            return
+        Popen(os.getenv("temp")+"\\NTDUIALoader.exe",shell=True)
+        exit(0)
+if __name__=="__main__":
+    ff=0
+    tryLoadUIA()
+    loadToolDLL()
     bl=os.getcwd()
+    QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     app=QApplication(sys.argv)
     os.chdir(os.getenv("SystemDrive"))
     flag,flag2,flag3=1,1,0

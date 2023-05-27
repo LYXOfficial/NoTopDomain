@@ -17,7 +17,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>NoTopDomain v0.01 By LYX</string>
+   <string>NoTopDomain</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -359,21 +359,48 @@
         <property name="bottomMargin">
          <number>20</number>
         </property>
-        <item row="1" column="0">
+        <item row="9" column="1">
+         <widget class="QPushButton" name="reStart">
+          <property name="text">
+           <string>重启程序以应用设置</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="0" colspan="2">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="0" colspan="2">
          <widget class="QCheckBox" name="checkBox_2">
           <property name="text">
            <string>修改窗口化时自动缩放窗口（实验性）</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
+        <item row="9" column="0">
+         <widget class="QPushButton" name="pushButton_2">
+          <property name="text">
+           <string>保存</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="2">
          <widget class="QCheckBox" name="checkBox">
           <property name="text">
            <string>隐藏托盘</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="6" column="0" colspan="2">
          <layout class="QFormLayout" name="formLayout">
           <item row="0" column="0">
            <widget class="QLabel" name="label">
@@ -417,34 +444,14 @@
           </item>
          </layout>
         </item>
-        <item row="5" column="0">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="8" column="0">
-         <widget class="QPushButton" name="reStart">
+        <item row="4" column="0" colspan="2">
+         <widget class="QCheckBox" name="checkBox_4">
           <property name="text">
-           <string>重启程序以应用设置</string>
+           <string>启动强力杀进程（基于ntsd）（实验性）</string>
           </property>
          </widget>
         </item>
-        <item row="6" column="0">
-         <widget class="QPushButton" name="pushButton_2">
-          <property name="text">
-           <string>保存</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
+        <item row="1" column="0" colspan="2">
          <widget class="QCheckBox" name="checkBox_3">
           <property name="text">
            <string>禁用QSS</string>

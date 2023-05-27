@@ -7,16 +7,25 @@ import datetime
 from . import mail,b64,Ui_feedback
 class Feedbacker(QWidget,Ui_feedback.Ui_feedbacker):
     ok=pyqtSignal()
+    fail=pyqtSignal()
     def __init__(self):
         super().__init__()
         self.setupUi(self)
         self.retranslateUi(self)
         self.setup()
     def Ok(self):
-        QMessageBox.information(self,"提示","发送成功，感谢您的反馈！")
+        QMessageBox.information(self,"提示","发送成功啦！")
         self.close()
+    def Fail(self):
+        QMessageBox.warning(self,"QwQ","发送失败了...要不去交Issue吧（")
+        self.pushButton_2.setText("发送反馈")
+        self.pushButton_2.setEnabled(1)
+        self.lineEdit.setEnabled(1)
+        self.lineEdit_2.setEnabled(1)
+        self.textEdit.setEnabled(1)
     def setup(self):
         self.ok.connect(self.Ok)
+        self.fail.connect(self.Fail)
         self.icon=QPixmap()
         self.icon.loadFromData(base64.b64decode(b64.icon))
         self.setWindowIcon(QIcon(self.icon))
@@ -33,8 +42,11 @@ class Feedbacker(QWidget,Ui_feedback.Ui_feedbacker):
         self.lineEdit.setEnabled(0)
         self.lineEdit_2.setEnabled(0)
         self.textEdit.setEnabled(0)
-        mail.mail(c=self.textEdit.toPlainText(),t=self.lineEdit.text(),f=self.lineEdit_2.text())
-        self.ok.emit()
+        try:
+            mail.mail(c=self.textEdit.toPlainText(),t=self.lineEdit.text(),f=self.lineEdit_2.text())
+            self.ok.emit()
+        except:
+            self.fail.emit()
 def start(message):
     global window
     window=Feedbacker()

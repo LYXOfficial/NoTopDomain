@@ -4,7 +4,7 @@
 
 你还在为极域控制，老师禁用，上课效率太低而烦恼吗？这个软件将帮你解决问题！
 
-https://yisous.xyz/posts/55af90aa
+https://yisous.xyz/posts/55af90aa/
 
 Lanzou: https://xydc.lanzouo.com/b018x6qza 密码:2al0
 

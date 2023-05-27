@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'e:\NoTopDomain\libs\feedback.ui'
+# Form implementation generated from reading ui file 'f:\Phigros\NoTopDomain\libs\feedback.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -17,7 +17,7 @@ class Ui_feedbacker(object):
         feedbacker.setWindowModality(QtCore.Qt.ApplicationModal)
         feedbacker.resize(399, 318)
         font = QtGui.QFont()
-        font.setFamily("萍方0")
+        font.setFamily("Microsoft YaHei UI")
         feedbacker.setFont(font)
         self.gridLayout = QtWidgets.QGridLayout(feedbacker)
         self.gridLayout.setObjectName("gridLayout")
@@ -68,4 +68,4 @@ class Ui_feedbacker(object):
         self.lineEdit.setPlaceholderText(_translate("feedbacker", "必填"))
         self.label_4.setText(_translate("feedbacker", "联系方式/昵称"))
         self.lineEdit_2.setPlaceholderText(_translate("feedbacker", "选填"))
-        self.label_2.setText(_translate("feedbacker", "<a href=\"https://github.com/LYXOfficial/notopdomain/issues\">去Github提交Issue</a href>"))
+        self.label_2.setText(_translate("feedbacker", "<html><head/><body><p>PS：发送时间可能较长 <a href=\"https://github.com/LYXOfficial/notopdomain/issues\"><span style=\" text-decoration: underline; color:#0000ff;\">去Github提交Issue</span></a></p></body></html>"))
