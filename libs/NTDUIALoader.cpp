@@ -15,7 +15,7 @@ LPWSTR* CharToLPWSTR(const char* pChar)
 }
 
 int main() {
-	//ÌáÈ¨µ½DebugÒÔ»ñÈ¡½ø³Ì¾ä±ú
+	//ï¿½ï¿½È¨ï¿½ï¿½Debugï¿½Ô»ï¿½È¡ï¿½ï¿½ï¿½Ì¾ï¿½ï¿½
 	//https://blog.csdn.net/zuishikonghuan/article/details/47746451
 	HANDLE hToken;
 	LUID Luid;
@@ -30,30 +30,30 @@ int main() {
 	tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
 	AdjustTokenPrivileges(hToken, false, &tp, sizeof(tp), NULL, NULL);
 	CloseHandle(hToken);
-	//ÅÐ¶ÏÊÇ·ñÒÑ¾­SystemÈ¨ÏÞÆô¶¯×ÔÉí
+	//ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½Ñ¾ï¿½SystemÈ¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	string s = GetCommandLine(),runs,run=getenv("temp");
 	if(s[s.size()-1]=='S'){
-		//½µÈ¨ÒÔµ±Ç°ÓÃ»§½øÐÐÆô¶¯
-		//È¡explorerµÄPID
+		//ï¿½ï¿½È¨ï¿½Ôµï¿½Ç°ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		//È¡explorerï¿½ï¿½PID
 		HWND hwnd = FindWindow("Shell_TrayWnd", NULL);
 		DWORD pid;
 		GetWindowThreadProcessId(hwnd, &pid);
-		//´ò¿ª¾ä±ú£¬ÇÔÈ¡ÁîÅÆ
+		//ï¿½ò¿ª¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
 		HANDLE handle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, pid);
 		HANDLE token;
-		OpenProcessToken(handle, TOKEN_DUPLICATE, &token);//È¡µÃtoken
+		OpenProcessToken(handle, TOKEN_DUPLICATE, &token);//È¡ï¿½ï¿½token
 		DuplicateTokenEx(token, MAXIMUM_ALLOWED, NULL, SecurityIdentification, TokenPrimary, &token);
 		CloseHandle(handle);
-		//ÎªÁîÅÆÆôÓÃUIAccess
+		//Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½UIAccess
 		BOOL fUIAccess = TRUE;
 		SetTokenInformation(token, TokenUIAccess, &fUIAccess, sizeof (fUIAccess));
-		//Æô¶¯ÐÅÏ¢
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 		STARTUPINFOW si;
 		PROCESS_INFORMATION pi;
 		ZeroMemory(&si, sizeof(STARTUPINFOW));
 		si.cb = sizeof(STARTUPINFOW);
-		si.lpDesktop = L"winsta0\\default";//ÏÔÊ¾´°¿Ú
-		//Æô¶¯½ø³Ì£¬²»ÄÜÓÃCreateProcessAsUser·ñÔò±¨´í1314ÎÞÌØÈ¨
+		si.lpDesktop = L"winsta0\\default";//ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½CreateProcessAsUserï¿½ï¿½ï¿½ò±¨´ï¿½1314ï¿½ï¿½ï¿½ï¿½È¨
 		ifstream inFile;
 		inFile.open((run+"\\NTDUIATemp.tmp").c_str(),ios::in);
 		if(inFile){
@@ -64,7 +64,7 @@ int main() {
 		CloseHandle(token);
 		return 0;
 	}
-	//Ã¶¾Ù½ø³Ì»ñÈ¡lsass.exeµÄIDºÍwinlogon.exeµÄID£¬ËüÃÇÊÇÉÙÓÐµÄ¿ÉÒÔÖ±½Ó´ò¿ª¾ä±úµÄÏµÍ³½ø³Ì
+	//Ã¶ï¿½Ù½ï¿½ï¿½Ì»ï¿½È¡lsass.exeï¿½ï¿½IDï¿½ï¿½winlogon.exeï¿½ï¿½IDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ¿ï¿½ï¿½ï¿½Ö±ï¿½Ó´ò¿ª¾ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½ï¿½
 	DWORD idL, idW;
 	PROCESSENTRY32 pe;
 	pe.dwSize = sizeof(PROCESSENTRY32);
@@ -80,23 +80,23 @@ int main() {
 	}
 	CloseHandle(hSnapshot);
 	
-	//»ñÈ¡¾ä±ú£¬ÏÈÊÔlsassÔÙÊÔwinlogon
+	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½lsassï¿½ï¿½ï¿½ï¿½winlogon
 	HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, idL);
 	if(!hProcess)hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, idW);
 	HANDLE hTokenx;
-	//»ñÈ¡ÁîÅÆ
+	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
 	OpenProcessToken(hProcess, TOKEN_DUPLICATE, &hTokenx);
-	//¸´ÖÆÁîÅÆ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	DuplicateTokenEx(hTokenx, MAXIMUM_ALLOWED, NULL, SecurityIdentification, TokenPrimary, &hToken);
 	CloseHandle(hProcess);
 	CloseHandle(hTokenx);
-	//Æô¶¯ÐÅÏ¢
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 	STARTUPINFOW si;
 	PROCESS_INFORMATION pi;
 	ZeroMemory(&si, sizeof(STARTUPINFOW));
 	si.cb = sizeof(STARTUPINFOW);
-	si.lpDesktop = L"winsta0\\default";//ÏÔÊ¾´°¿Ú
-	//Æô¶¯½ø³Ì£¬²»ÄÜÓÃCreateProcessAsUser·ñÔò±¨´í1314ÎÞÌØÈ¨
+	si.lpDesktop = L"winsta0\\default";//ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½CreateProcessAsUserï¿½ï¿½ï¿½ò±¨´ï¿½1314ï¿½ï¿½ï¿½ï¿½È¨
 	CreateProcessWithTokenW(hToken, LOGON_NETCREDENTIALS_ONLY, NULL, lstrcatW(GetCommandLineW(),L" S"), NORMAL_PRIORITY_CLASS, NULL, NULL, &si, &pi);
 	CloseHandle(hToken);
 }

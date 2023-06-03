@@ -26,6 +26,9 @@ class Feedbacker(QWidget,Ui_feedback.Ui_feedbacker):
     def setup(self):
         self.ok.connect(self.Ok)
         self.fail.connect(self.Fail)
+        self.setWindowFlag(Qt.Window)
+        self.setWindowModality(0)
+        self.setFixedSize(self.width(),self.height())
         self.icon=QPixmap()
         self.icon.loadFromData(base64.b64decode(b64.icon))
         self.setWindowIcon(QIcon(self.icon))

@@ -1,7 +1,7 @@
 QMainWindow *{
 	font-family:"Microsoft YaHei UI Light";
 }
-QMainWindow{
+#centralwidget{
 	margin-top:0;
 }
 QPushButton{
@@ -11,14 +11,14 @@ QPushButton{
 	padding-bottom:5px;
 	height:0.9em;
 	border:none;
-	background-color: #cccccc;
+	background-color: #cfcfcf;
 	border-radius:3px;
 }
 QPushButton:hover{
-	background-color:#bbbbbb;
+	background-color:#bfbfbf;
 }
 QPushButton:pressed{
-	background-color:#aaaaaa;
+	background-color:#aaa;
 }
 QLineEdit{
 	height:1.3em;
@@ -37,11 +37,55 @@ QTabBar::tab:hover{
 	color:#555555;
 }
 QTabBar::tab:selected{
-	border-bottom:2px solid blue;
+	border-bottom:2px solid #ed709b;
 }
 #HangUpTD,#GBWindowed{
 	max-width:4em;
 }
 #KillTD,#EnableTDBar{
 	max-width:6em;
+}
+QTabWidget::pane{
+	border-radius:10px;
+	background-color:#ffffff;
+	border: 1px solid #ddd;
+	padding:2px;
+	margin:0 2px 2px 2px;
+}
+/* QCheckBox::indicator{
+	border-radius:2px;
+	border:0.5px solid gray;
+	padding:2px;
+}
+QCheckBox::indicator:checked{
+	background-color:#0460da;
+	border-color:#ccc;
+	position:relative;
+} */
+QLineEdit{
+	border-radius:3px;
+	border:1px solid #bbb;
+	selection-background-color:#ed709b;
+}
+QGroupBox{
+	border-radius:5px;
+	border:1px solid #ccc;
+	padding-top:15px;
+	font-family:"Microsoft YaHei UI";
+}
+QGroupBox::title{
+	subcontrol-origin:margin;
+	padding:5px 10px;
+	background:transparent;
+}
+QMenuBar::item{
+	border-radius:5px;
+	padding:2px 8px;
+	background-color:white;
+}
+QMenuBar::item:selected{
+	background-color:#ddd;
+}
+QMenuBar{
+	background-color:white;
 }
