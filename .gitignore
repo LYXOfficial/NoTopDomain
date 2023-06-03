@@ -1,4 +1,5 @@
-__pycache__/
+/libs/__pycache__/
+/libs/system_hotkey/__pycache__/
 /NoTopDomain.build
 /NoTopDomain.dist
 /NoTopDomain.onefile-build
