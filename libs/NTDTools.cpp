@@ -1,3 +1,4 @@
+//蒟蒻 QwQ
 #include <windows.h>
 #include <cstdio>
 using namespace std;
@@ -14,23 +15,22 @@ extern"C" {
 }
 void UnlockKeyboard(){
     HHOOK kbdHook=SetWindowsHookEx(WH_KEYBOARD_LL,(HOOKPROC)HookProc,GetModuleHandle(NULL),0);
-    Sleep(25);
+    Sleep(50);
     UnhookWindowsHookEx(kbdHook);
 }
 void UnlockMouse(){
-    // HHOOK mseHook = (HHOOK)SetWindowsHookEx(WH_MOUSE_LL, (HOOKPROC)HookProc, GetModuleHandle(NULL), 0);
-    // ClipCursor(0);
-    // UnhookWindowsHookEx(mseHook);
-    // Sleep(10);
-    // 因为鼠标卡顿用户体验不好暂时不要
+    HHOOK mseHook = (HHOOK)SetWindowsHookEx(WH_MOUSE_LL, (HOOKPROC)HookProc, GetModuleHandle(NULL), 0);
+    ClipCursor(0);
+    Sleep(50);
+    UnhookWindowsHookEx(mseHook);
 }
 void SetWindowPref(HWND hwnd){
     SetWindowPos(hwnd,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
-    Sleep(20);
+    Sleep(50);
 }
 void SetWindowNoPref(HWND hwnd){
     SetWindowPos(hwnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
-    Sleep(20);
+    Sleep(50);
 }
 void GetMythwarePasswordFromRegedit() {
     char str[1145];
@@ -58,7 +58,7 @@ void GetMythwarePasswordFromRegedit() {
 		retKeyVal[i + 3] = (retKeyVal[i + 3] ^ 0x45 ^ 0x50);
 	}
 	int sum = 0;
-	for (int i = 0; i < int(nSize); i += 1) {
+	for (int i = 1; i <=int(nSize); i += 1) {
 		if (retKeyVal[i + 1] == 0) {
 			str[sum] = retKeyVal[i];
 			sum++;
@@ -67,9 +67,9 @@ void GetMythwarePasswordFromRegedit() {
 	}
     str[sum]='\0';
     char* s=getenv("temp");
-    strcat(s,"\\NTDPwd.txt");
+    strcat(s,"\\NTDPwd.key");
     freopen(s,"w",stdout);
-    puts(str+f);
+    puts(str);
     freopen("CON", "w", stdout);
     return;
 }
@@ -94,5 +94,7 @@ int StartMythware(LPWSTR location){
     else return 0;
 }
 int main(){
+    // StartMythware(L"explorer.exe");
+    // GetMythwarePasswordFromRegedit();
 	return 0;
 }

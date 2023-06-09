@@ -62,7 +62,7 @@ QCheckBox::indicator:checked{
 	border-color:#ccc;
 	position:relative;
 } */
-QLineEdit{
+QLineEdit,QTextEdit{
 	border-radius:3px;
 	border:1px solid #bbb;
 	selection-background-color:#ed709b;
@@ -88,4 +88,7 @@ QMenuBar::item:selected{
 }
 QMenuBar{
 	background-color:white;
+}
+QLineEdit:focus,QTextEdit:focus{
+	border-color:#ed709b;
 }

@@ -3,4 +3,4 @@ nuitka NoTopDomain.py --mingw64 --standalone --windows-uac-admin --enable-plugin
 g++ -std=c++14 ./libs/NTDTools.cpp -shared -o NTDTools.dll -s
 g++ -std=c++14 ./libs/NTDTools.cpp -m32 -shared -o NTDTools32.dll -s
 # 编译UIAccess提权工具（EXE）（mingw64部分版本会出错（ld的sysroot），建议使用TDM-GCC MSVC或mingw10.0+）
-g++ -std=c++14 ./libs/NTDUIALoader.cpp -s -m32 -static-libgcc -o NTDUIALoader.exe -mwindows
+g++ -std=c++14 ./libs/NTDUIALoader.cpp -s -m32 -static-libgcc -os -o NTDUIALoader.exe -mwindows

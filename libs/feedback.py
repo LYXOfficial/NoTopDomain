@@ -8,8 +8,8 @@ from . import mail,b64,Ui_feedback
 class Feedbacker(QWidget,Ui_feedback.Ui_feedbacker):
     ok=pyqtSignal()
     fail=pyqtSignal()
-    def __init__(self):
-        super().__init__()
+    def __init__(self,cll):
+        super().__init__(cll)
         self.setupUi(self)
         self.retranslateUi(self)
         self.setup()
