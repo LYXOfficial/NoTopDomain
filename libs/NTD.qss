@@ -4,27 +4,30 @@ QMainWindow *{
 #centralwidget{
 	margin-top:0;
 }
-QPushButton{
+QPushButton,QToolButton{
 	padding-left: 7px;
 	padding-right:7px;
 	padding-top:5px;
 	padding-bottom:5px;
 	height:0.9em;
 	border:none;
-	background-color: #cfcfcf;
-	border-radius:3px;
+	background-color: #ccc;
+	border-radius:5px;
 }
-QPushButton:hover{
+QToolButton{
+	padding:3px;
+}
+QPushButton:hover,QToolButton:hover{
 	background-color:#bfbfbf;
 }
-QPushButton:pressed{
+QPushButton:pressed,QToolButton:hover{
 	background-color:#aaa;
 }
 QLineEdit{
 	height:1.3em;
 }
 QCheckBox{
-	margin:2px;
+	margin:1px;
 }
 QTabBar::tab{
 	background:transparent;
@@ -62,8 +65,8 @@ QCheckBox::indicator:checked{
 	border-color:#ccc;
 	position:relative;
 } */
-QLineEdit,QTextEdit{
-	border-radius:3px;
+QLineEdit,QTextEdit,QPlainTextEdit{
+	border-radius:5px;
 	border:1px solid #bbb;
 	selection-background-color:#ed709b;
 }
@@ -89,6 +92,6 @@ QMenuBar::item:selected{
 QMenuBar{
 	background-color:white;
 }
-QLineEdit:focus,QTextEdit:focus{
+QLineEdit:focus,QTextEdit:focus,QPlainTextEdit:focus{
 	border-color:#ed709b;
 }

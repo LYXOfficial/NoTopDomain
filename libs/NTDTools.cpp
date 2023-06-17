@@ -1,6 +1,7 @@
 //蒟蒻 QwQ
 #include <windows.h>
 #include <cstdio>
+#include <tlhelp32.h>
 using namespace std;
 HOOKPROC HookProc(int nCode,WPARAM wParam,LPARAM lParam){
     return 0;
@@ -12,6 +13,8 @@ extern"C" {
     void UnlockMouse(void);
     void GetMythwarePasswordFromRegedit(void);
     int StartMythware(LPWSTR location);
+    bool GetWindowRightMenu(HWND hwnd);
+    bool KillProcessByThread(int pid);
 }
 void UnlockKeyboard(){
     HHOOK kbdHook=SetWindowsHookEx(WH_KEYBOARD_LL,(HOOKPROC)HookProc,GetModuleHandle(NULL),0);
@@ -92,6 +95,24 @@ int StartMythware(LPWSTR location){
     CloseHandle(token);
     if(!res) return 1;
     else return 0;
+}
+bool KillProcessByThread(int pid){
+    HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, pid);
+    if (hSnapshot != INVALID_HANDLE_VALUE) {
+        bool rtn = true;
+        THREADENTRY32 te = {sizeof(te)};
+        BOOL fOk = Thread32First(hSnapshot, &te);
+        for (; fOk; fOk = Thread32Next(hSnapshot, &te)) {
+            if (te.th32OwnerProcessID == pid) {
+                HANDLE hThread = OpenThread(THREAD_TERMINATE, FALSE, te.th32ThreadID);
+                if (!TerminateThread(hThread, 0)) rtn = false;
+                CloseHandle(hThread);
+            }
+        }
+        CloseHandle(hSnapshot);
+        return rtn;
+    }
+    return false;
 }
 int main(){
     // StartMythware(L"explorer.exe");

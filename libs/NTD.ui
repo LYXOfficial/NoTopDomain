@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>336</width>
-    <height>370</height>
+    <width>345</width>
+    <height>399</height>
    </rect>
   </property>
   <property name="font">
@@ -36,7 +36,7 @@
     <property name="spacing">
      <number>3</number>
     </property>
-    <item row="0" column="1">
+    <item row="0" column="0" colspan="2">
      <widget class="QTabWidget" name="PigeonGames">
       <property name="currentIndex">
        <number>0</number>
@@ -136,6 +136,12 @@
            </item>
            <item row="0" column="2" colspan="2">
             <widget class="QPushButton" name="pushButton_6">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string>监视图片替换</string>
              </property>
@@ -160,7 +166,7 @@
              </property>
              <property name="maximumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>16777215</height>
               </size>
              </property>
@@ -224,26 +230,19 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
            <property name="spacing">
-            <number>4</number>
+            <number>3</number>
            </property>
-           <item row="0" column="1">
-            <widget class="QCheckBox" name="IamTop">
-             <property name="text">
-              <string>置顶窗口</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="4">
-            <widget class="QPushButton" name="RestartExplorer">
-             <property name="text">
-              <string>重启资源管理器</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="3">
+           <item row="4" column="3">
             <widget class="QPushButton" name="NoImg">
              <property name="text">
               <string>解除映像劫持</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QPushButton" name="ToolsYes">
+             <property name="text">
+              <string>解工具/限制</string>
              </property>
             </widget>
            </item>
@@ -254,14 +253,35 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
-            <widget class="QPushButton" name="ToolsYes">
+           <item row="2" column="1">
+            <widget class="QCheckBox" name="NoBlackScreen">
              <property name="text">
-              <string>解工具/限制</string>
+              <string>屏蔽黑屏安静</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="4">
+           <item row="3" column="3">
+            <widget class="QCheckBox" name="NoKill">
+             <property name="text">
+              <string>拦截杀掉进程</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QCheckBox" name="NoShutdown">
+             <property name="text">
+              <string>脱离远程关机</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="IamTop">
+             <property name="text">
+              <string>置顶窗口</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="5">
             <widget class="QCheckBox" name="MouseYes">
              <property name="text">
               <string>解除鼠标限制</string>
@@ -282,31 +302,38 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="4">
+           <item row="1" column="5">
             <widget class="QCheckBox" name="UnlockTDHook">
              <property name="text">
               <string>解除极域防杀</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="4">
+           <item row="3" column="1">
+            <widget class="QCheckBox" name="NoRemoteRun">
+             <property name="text">
+              <string>拦截远程运行</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="5">
+            <widget class="QPushButton" name="RestartExplorer">
+             <property name="text">
+              <string>重启资源管理器</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="5">
+            <widget class="QCheckBox" name="NoMontior">
+             <property name="text">
+              <string>拦截教师监控</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="5">
             <widget class="QCheckBox" name="NoControl">
              <property name="text">
-              <string>拦截教师控制</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="3">
-            <widget class="QCheckBox" name="NoShutdown">
-             <property name="text">
-              <string>脱离远程关机</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QCheckBox" name="NoBlackScreen">
-             <property name="text">
-              <string>屏蔽黑屏安静</string>
+              <string>拦截传入连接</string>
              </property>
             </widget>
            </item>
@@ -473,6 +500,20 @@
           </layout>
          </widget>
         </item>
+        <item row="8" column="0">
+         <widget class="QPushButton" name="pushButton_2">
+          <property name="text">
+           <string>保存</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
+         <widget class="QPushButton" name="reStart">
+          <property name="text">
+           <string>重启程序以应用设置</string>
+          </property>
+         </widget>
+        </item>
         <item row="4" column="0" colspan="2">
          <spacer name="verticalSpacer">
           <property name="orientation">
@@ -495,20 +536,30 @@
            <bool>false</bool>
           </property>
           <layout class="QGridLayout" name="gridLayout_5">
-           <property name="spacing">
-            <number>4</number>
+           <property name="horizontalSpacing">
+            <number>0</number>
            </property>
-           <item row="3" column="0" colspan="2">
-            <widget class="QCheckBox" name="checkBox_4">
-             <property name="text">
-              <string>强力杀进程（基于ntsd/实验性）</string>
-             </property>
-            </widget>
-           </item>
+           <property name="verticalSpacing">
+            <number>1</number>
+           </property>
            <item row="1" column="0">
             <widget class="QCheckBox" name="checkBox">
              <property name="text">
               <string>隐藏托盘</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0">
+            <widget class="QLabel" name="label_17">
+             <property name="text">
+              <string>杀进程方案:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <widget class="QLabel" name="label_16">
+             <property name="text">
+              <string>极域路径修改</string>
              </property>
             </widget>
            </item>
@@ -519,28 +570,90 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
+           <item row="1" column="2">
+            <widget class="QCheckBox" name="checkBox_4">
+             <property name="text">
+              <string>允许教师截屏</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0" colspan="3">
+            <widget class="Line" name="line_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="1" colspan="2">
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <item>
+              <widget class="QLineEdit" name="TopDomainLocationSet">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="toolButton">
+               <property name="text">
+                <string>...</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="10" column="0" colspan="3">
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <widget class="QRadioButton" name="radioButton">
+               <property name="text">
+                <string>TermProc</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButton_3">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="text">
+                <string>TermThr</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButton_2">
+               <property name="text">
+                <string>ntsd.exe</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="2" column="0" colspan="2">
             <widget class="QCheckBox" name="checkBox_2">
              <property name="text">
-              <string>修改窗口化时自动缩放窗口</string>
+              <string>修改窗口化时自缩放</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QCheckBox" name="checkBox_5">
+             <property name="text">
+              <string>禁用随机窗口名</string>
              </property>
             </widget>
            </item>
           </layout>
-         </widget>
-        </item>
-        <item row="8" column="0">
-         <widget class="QPushButton" name="pushButton_2">
-          <property name="text">
-           <string>保存</string>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="1">
-         <widget class="QPushButton" name="reStart">
-          <property name="text">
-           <string>重启程序以应用设置</string>
-          </property>
          </widget>
         </item>
        </layout>
@@ -550,54 +663,6 @@
         <string>更新</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_7">
-        <item row="1" column="0" colspan="3">
-         <widget class="Line" name="line_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="2">
-         <widget class="QPushButton" name="pushButton">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>下载更新包</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <widget class="QLabel" name="label_11">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>大小：0MB</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="label_10">
-          <property name="text">
-           <string>当前版本：</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_12">
-          <property name="text">
-           <string>更新日志：</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="label_13">
-          <property name="text">
-           <string>更新包信息：</string>
-          </property>
-         </widget>
-        </item>
         <item row="7" column="0" colspan="3">
          <widget class="QProgressBar" name="progressBar">
           <property name="enabled">
@@ -617,6 +682,37 @@
           </property>
          </widget>
         </item>
+        <item row="3" column="0" colspan="3">
+         <widget class="QPlainTextEdit" name="plainTextEdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="plainText">
+           <string>获取中...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_13">
+          <property name="text">
+           <string>更新包信息：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="3">
+         <widget class="Line" name="line_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>当前版本：</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0" colspan="2">
          <widget class="QLabel" name="label_9">
           <property name="text">
@@ -627,17 +723,10 @@
         <item row="4" column="0">
          <widget class="QLabel" name="label_14">
           <property name="text">
-           <string>&lt;a href=&quot;https://github.com/lyxofficial/notopdomain/releases&quot;&gt;查看更新日志&lt;/a&gt;</string>
+           <string>&lt;a href=&quot;https://github.com/lyxofficial/notopdomain/releases&quot;&gt;查看历史版本&lt;/a&gt;</string>
           </property>
-         </widget>
-        </item>
-        <item row="3" column="0" colspan="3">
-         <widget class="QPlainTextEdit" name="plainTextEdit">
-          <property name="readOnly">
+          <property name="openExternalLinks">
            <bool>true</bool>
-          </property>
-          <property name="plainText">
-           <string>获取中...</string>
           </property>
          </widget>
         </item>
@@ -659,25 +748,78 @@
            <item>
             <widget class="QLabel" name="label_15">
              <property name="text">
-              <string>新版下载完毕，请手动替换</string>
+              <string>新版下载完毕</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_5">
+            <widget class="QPushButton" name="pushButton_3">
              <property name="text">
-              <string>启动新版</string>
+              <string>重启并应用更新</string>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="pushButton_4">
              <property name="text">
-              <string>打开位置</string>
+              <string>打开下载位置</string>
              </property>
             </widget>
            </item>
           </layout>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_12">
+          <property name="text">
+           <string>更新日志：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="2">
+         <widget class="QPushButton" name="pushButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>下载更新包</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="label_11">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>大小：获取中...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_5">
+       <attribute name="title">
+        <string>帮助</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="leftMargin">
+         <number>5</number>
+        </property>
+        <property name="topMargin">
+         <number>5</number>
+        </property>
+        <property name="rightMargin">
+         <number>5</number>
+        </property>
+        <property name="bottomMargin">
+         <number>5</number>
+        </property>
+        <item>
+         <widget class="QTextBrowser" name="textBrowser">
+          <property name="openExternalLinks">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
        </layout>
@@ -691,7 +833,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>336</width>
+     <width>345</width>
      <height>22</height>
     </rect>
    </property>

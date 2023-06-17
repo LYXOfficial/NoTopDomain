@@ -1,4 +1,6 @@
+# nuitka打包，第一行为mingw，第二行为msvc，实测msvc尺寸稍小
 nuitka NoTopDomain.py --mingw64 --standalone --windows-uac-admin --enable-plugin=pyqt5 --windows-icon-from-ico=app.ico --onefile --nofollow-imports --windows-disable-console
+nuitka NoTopDomain.py --msvc=latest --standalone --windows-uac-admin --enable-plugin=pyqt5 --windows-icon-from-ico=app.ico --onefile --nofollow-imports --windows-disable-console
 # 编译C++工具包动态链接库（DLL）
 g++ -std=c++14 ./libs/NTDTools.cpp -shared -o NTDTools.dll -s
 g++ -std=c++14 ./libs/NTDTools.cpp -m32 -shared -o NTDTools32.dll -s
