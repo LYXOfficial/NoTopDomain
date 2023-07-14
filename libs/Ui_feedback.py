@@ -68,4 +68,4 @@ class Ui_feedbacker(object):
         self.lineEdit.setPlaceholderText(_translate("feedbacker", "必填"))
         self.label_4.setText(_translate("feedbacker", "联系方式/昵称"))
         self.lineEdit_2.setPlaceholderText(_translate("feedbacker", "选填"))
-        self.label_2.setText(_translate("feedbacker", "<html><head/><body><p>PS：发送时间可能较长 <a href=\"https://github.com/LYXOfficial/notopdomain/issues\"><span style=\" text-decoration: underline; color:#0000ff;\">去Github提交Issue</span></a></p></body></html>"))
+        self.label_2.setText(_translate("feedbacker", "<html><head/><body><p>PS：发送时间可能较长 <a href=\"https://github.com/LYXOfficial/NoTopDomain/issues\"><span style=\" text-decoration: underline; color:#0000ff;\">去Github提交Issue</span></a></p></body></html>"))

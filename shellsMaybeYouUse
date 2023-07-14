@@ -2,7 +2,9 @@
 nuitka NoTopDomain.py --mingw64 --standalone --windows-uac-admin --enable-plugin=pyqt5 --windows-icon-from-ico=app.ico --onefile --nofollow-imports --windows-disable-console
 nuitka NoTopDomain.py --msvc=latest --standalone --windows-uac-admin --enable-plugin=pyqt5 --windows-icon-from-ico=app.ico --onefile --nofollow-imports --windows-disable-console
 # 编译C++工具包动态链接库（DLL）
-g++ -std=c++14 ./libs/NTDTools.cpp -shared -o NTDTools.dll -s
-g++ -std=c++14 ./libs/NTDTools.cpp -m32 -shared -o NTDTools32.dll -s
+g++ -std=c++14 ./libs/NTDTools.cpp -m32 -shared -o NTDTools.dll -s
 # 编译UIAccess提权工具（EXE）（mingw64部分版本会出错（ld的sysroot），建议使用TDM-GCC MSVC或mingw10.0+）
 g++ -std=c++14 ./libs/NTDUIALoader.cpp -s -m32 -static-libgcc -os -o NTDUIALoader.exe -mwindows
+# 编译注入的隐藏窗口DLL
+g++ -std=c++14 ./libs/NTDHider.cpp -shared -o NTDHider.dll -s
+g++ -std=c++14 ./libs/NTDShower.cpp -shared -o NTDShower.dll -s
