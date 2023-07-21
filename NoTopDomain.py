@@ -1,7 +1,7 @@
 '''
 QwQ (。・ω・。)
 
-NoTopDomain v2.2
+NoTopDomain v2.3
 !!
 某蒟蒻的垃圾代码
 '''
@@ -30,14 +30,16 @@ from ctypes.wintypes import *
 from libs.b64 import *
 from libs.Ui_NTD import *
 from libs.feedback import *
+from libs.UDPAttack import *
 from libs.system_hotkey import *
+from libs.moyu import *
 from platform import *
 from pynput import *
 
 # 这是 using namespace std; 后遗症罢（
 
-VERSION="v2.2"
-DEBUG=0
+VERSION="v2.3"
+DEBUG=FALSE
 class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     sw=pyqtSignal()
     st=pyqtSignal()
@@ -182,6 +184,13 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                     self.log("等待操作...(建议查看帮助)")
         self.ff.connect(self.forceFull)
         self.sw.connect(self.showWindow)
+        self.gjW=UDPAttack()
+        self.gjW.setWindowIcon(self.windowIcon())
+        self.moyu=Moyu()
+        self.moyu.setWindowIcon(self.windowIcon())
+        self.moyu.setStyleSheet(self.styleSheet())
+        windll.user32.SetWindowDisplayAffinity(int(self.gjW.winId()),0x11)
+        windll.user32.SetWindowDisplayAffinity(int(self.moyu.winId()),0x11)
         self.GBWindowed.clicked.connect(self.EnableFullScreen)
         self.checkBox_4.clicked.connect(self.switchWindowVisiable)
         self.ef.connect(lambda:self.EnableFullScreen() if self.GBWindowed.isEnabled() else self.log("切换窗口化仅在检查到广播后可用"))
@@ -189,8 +198,11 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.action_4=QAction("日志")
         self.feedback=QAction("反馈")
         self.action_3=QAction("启动TSK")
-        # self.action_6=QAction("摸鱼")
+        self.action_6=QAction("摸鱼")
+        self.action_7=QAction("攻击")
         self.action_5=QAction("退出程序")
+        self.action_7.triggered.connect(self.gjW.showE)
+        self.action_6.triggered.connect(self.moyu.showE)
         self.action_5.triggered.connect(lambda:os._exit(0) if self.question("提示","退出程序吗？")==16384 else 0)
         self.topLabel=QLabel("")
         self.topLabel.setWindowFlag(Qt.SplashScreen)
@@ -206,7 +218,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.tl2timer.timeout.connect(self.hidelb2)
         self.checkBox.clicked.connect(self.reTrayState)
         self.pushButton_4.clicked.connect(lambda:Popen(f"""explorer /select, "{os.getenv("systemdrive")}\\NoTopDomain {self.updver}.exe" """,shell=True))
-        self.menubar.addActions([self.action_1,self.action_4,self.feedback,self.action_3,self.action_5])
+        self.menubar.addActions([self.action_1,self.action_4,self.feedback,self.action_3,self.action_6,self.action_7,self.action_5])
         self.action_1.triggered.connect(self.showAbout)
         self.action_2.triggered.connect(self.showHelp)
         self.action_3.triggered.connect(self.startTSK)
@@ -363,12 +375,12 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                     self.topLabel2.setText("显示窗口失败")
                     self.log("显示窗口失败，仅支持显示64位和非系统进程")
                 self.topLabel2.show()
+                x,y,_,__=GetWindowRect(hwnd)
+                SetWindowPos(self.topLabel2.winId(),HWND_TOPMOST,x+10,y+10,0,0,SWP_NOSIZE)
                 if self.checkBox_4.isChecked():
                     windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0)
                 else:
                     windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0x11)
-                x,y,_,__=GetWindowRect(hwnd)
-                SetWindowPos(self.topLabel2.winId(),HWND_TOPMOST,x+10,y+10,0,0,SWP_NOSIZE)
                 self.tl2timer.start()
             else:
                 Tools.InjectDLL(pid,bytes(os.getenv("temp")+"\\NTDHider.dll","utf-8"))
@@ -382,12 +394,12 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                     self.topLabel2.setText("隐藏窗口失败")
                     self.log("隐藏窗口失败，仅支持隐藏64位和非系统进程")
                 self.topLabel2.show()
+                x,y,_,__=GetWindowRect(hwnd)
+                SetWindowPos(self.topLabel2.winId(),HWND_TOPMOST,x+10,y+10,0,0,SWP_NOSIZE)
                 if self.checkBox_4.isChecked():
                     windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0)
                 else:
                     windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0x11)
-                x,y,_,__=GetWindowRect(hwnd)
-                SetWindowPos(self.topLabel2.winId(),HWND_TOPMOST,x+10,y+10,0,0,SWP_NOSIZE)
                 self.tl2timer.start()
     def switchWindowVisiable(self):
         if self.checkBox_4.isChecked():
@@ -851,6 +863,8 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         except:
             self.log("保存失败")
     def closeEvent(self,event):
+        self.moyu.close()
+        self.gjW.close()
         if DEBUG:
             event.accept()
             try:
@@ -1099,13 +1113,13 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             self.hh=hwnd
             self.topLabel.setText("取消置顶")
             self.topLabel.show()
+            SetWindowPos(hwnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE)
+            x,y,_,__=GetWindowRect(hwnd)
+            SetWindowPos(self.topLabel.winId(),HWND_TOPMOST,x+10,y+10,0,0,SWP_NOSIZE)
             if self.checkBox_4.isChecked():
                 windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0)
             else:
                 windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0x11)
-            SetWindowPos(hwnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE)
-            x,y,_,__=GetWindowRect(hwnd)
-            SetWindowPos(self.topLabel.winId(),HWND_TOPMOST,x+10,y+10,0,0,SWP_NOSIZE)
             self.tltimer.start()
             self.log("取消置顶选中窗口，hwnd:%d"%hwnd)
     def nbs(self):
@@ -1252,6 +1266,8 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             self.activateWindow()
         else:
             self.hide()
+            self.moyu.close()
+            self.gjW.close()
 class UnlockKeyboard(Thread):
     def __init__(self):
         super().__init__()

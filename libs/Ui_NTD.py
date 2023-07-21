@@ -437,7 +437,7 @@ class Ui_NoTopDomain(object):
         self.checkBox_2.setText(_translate("NoTopDomain", "修改窗口化时自缩放"))
         self.checkBox_3.setText(_translate("NoTopDomain", "禁用QSS"))
         self.checkBox_4.setText(_translate("NoTopDomain", "允许教师截屏"))
-        self.label_16.setText(_translate("NoTopDomain", "窗口透明度"))
+        self.label_16.setText(_translate("NoTopDomain", "窗口不透明度"))
         self.checkBox_5.setText(_translate("NoTopDomain", "禁用随机窗口名"))
         self.PigeonGames.setTabText(self.PigeonGames.indexOf(self.tab_3), _translate("NoTopDomain", "设置"))
         self.plainTextEdit.setPlainText(_translate("NoTopDomain", "获取中..."))
