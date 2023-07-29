@@ -78,4 +78,5 @@ int main(){
 	si.lpDesktop = L"winsta0\\default";
 	CreateProcessWithTokenW(hToken, LOGON_NETCREDENTIALS_ONLY, NULL, lstrcatW(GetCommandLineW(),L" S"), NORMAL_PRIORITY_CLASS, NULL, NULL, &si, &pi);
 	CloseHandle(hToken);
+	return 0;
 }

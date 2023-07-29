@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>345</width>
-    <height>399</height>
+    <width>354</width>
+    <height>414</height>
    </rect>
   </property>
   <property name="font">
@@ -58,6 +58,45 @@
         <property name="bottomMargin">
          <number>5</number>
         </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_6">
+          <property name="maximumSize">
+           <size>
+            <width>20</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QPushButton" name="UninstallTopDomain">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>卸载极域</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="StudentRunning">
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>极域：&lt;span style=&quot;color:grey&quot;&gt;检测中&lt;/span&gt;</string>
+          </property>
+          <property name="margin">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
         <item row="1" column="0" colspan="4">
          <widget class="QGroupBox" name="groupBox">
           <property name="title">
@@ -136,6 +175,9 @@
            </item>
            <item row="0" column="2" colspan="2">
             <widget class="QPushButton" name="pushButton_6">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -178,168 +220,6 @@
           </layout>
          </widget>
         </item>
-        <item row="3" column="2">
-         <widget class="QPushButton" name="UninstallTopDomain">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>卸载极域</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="StudentRunning">
-          <property name="minimumSize">
-           <size>
-            <width>150</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>极域：&lt;span style=&quot;color:grey&quot;&gt;检测中&lt;/span&gt;</string>
-          </property>
-          <property name="margin">
-           <number>0</number>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLineEdit" name="TDPasswd">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-          <property name="placeholderText">
-           <string>尝试获取密码...</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="4">
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>限制解除</string>
-          </property>
-          <property name="flat">
-           <bool>false</bool>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_3">
-           <property name="spacing">
-            <number>3</number>
-           </property>
-           <item row="4" column="3">
-            <widget class="QPushButton" name="NoImg">
-             <property name="text">
-              <string>解除映像劫持</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QPushButton" name="ToolsYes">
-             <property name="text">
-              <string>解工具/限制</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="QCheckBox" name="WebsiteYes">
-             <property name="text">
-              <string>解除网站限制</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QCheckBox" name="NoBlackScreen">
-             <property name="text">
-              <string>屏蔽黑屏安静</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="3">
-            <widget class="QCheckBox" name="NoKill">
-             <property name="text">
-              <string>拦截杀掉进程</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="3">
-            <widget class="QCheckBox" name="NoShutdown">
-             <property name="text">
-              <string>脱离远程关机</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QCheckBox" name="IamTop">
-             <property name="text">
-              <string>置顶窗口</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="5">
-            <widget class="QCheckBox" name="MouseYes">
-             <property name="text">
-              <string>解除鼠标限制</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="3">
-            <widget class="QCheckBox" name="KeyboardYes">
-             <property name="text">
-              <string>解除键盘限制</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QCheckBox" name="USBYes">
-             <property name="text">
-              <string>U盘/软件限制</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="5">
-            <widget class="QCheckBox" name="UnlockTDHook">
-             <property name="text">
-              <string>解除极域防杀</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QCheckBox" name="NoRemoteRun">
-             <property name="text">
-              <string>拦截远程运行</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="5">
-            <widget class="QPushButton" name="RestartExplorer">
-             <property name="text">
-              <string>重启资源管理器</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="5">
-            <widget class="QCheckBox" name="NoMontior">
-             <property name="text">
-              <string>拦截教师监控</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="5">
-            <widget class="QCheckBox" name="NoControl">
-             <property name="text">
-              <string>拦截传入连接</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
         <item row="0" column="2">
          <widget class="QLabel" name="GBing">
           <property name="layoutDirection">
@@ -356,19 +236,6 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_6">
-          <property name="maximumSize">
-           <size>
-            <width>20</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="3">
          <widget class="QLabel" name="label_5">
           <property name="maximumSize">
@@ -379,6 +246,151 @@
           </property>
           <property name="text">
            <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="4">
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>限制解除</string>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_3">
+           <property name="spacing">
+            <number>3</number>
+           </property>
+           <item row="1" column="3">
+            <widget class="QCheckBox" name="WebsiteYes">
+             <property name="text">
+              <string>解除网站限制</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="3">
+            <widget class="QPushButton" name="NoImg">
+             <property name="text">
+              <string>解除映像劫持</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QCheckBox" name="KeyboardYes">
+             <property name="text">
+              <string>解除键盘限制</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QPushButton" name="ToolsYes">
+             <property name="text">
+              <string>解工具/限制</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QCheckBox" name="NoShutdown">
+             <property name="text">
+              <string>脱离远程关机</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="5">
+            <widget class="QCheckBox" name="MouseYes">
+             <property name="text">
+              <string>解除鼠标限制</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="5">
+            <widget class="QPushButton" name="RestartExplorer">
+             <property name="text">
+              <string>重启资源管理器</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="IamTop">
+             <property name="text">
+              <string>置顶窗口</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="USBYes">
+             <property name="text">
+              <string>U盘/软件限制</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="5">
+            <widget class="QCheckBox" name="NoRemoteRun">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="text">
+              <string>拦截极域操作</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="5">
+            <widget class="QCheckBox" name="NoControl">
+             <property name="text">
+              <string>拦截传入连接</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="5">
+            <widget class="QCheckBox" name="UnlockTDHook">
+             <property name="text">
+              <string>解除极域防杀</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QCheckBox" name="NoBlackScreen">
+             <property name="text">
+              <string>屏蔽黑屏安静</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <widget class="QCheckBox" name="NoMessage">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>拦截远程消息</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QCheckBox" name="NoMonitor">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>拦截教师控制</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="TDPasswd">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="placeholderText">
+           <string>尝试获取密码...</string>
           </property>
          </widget>
         </item>
@@ -468,7 +480,7 @@
              <item row="0" column="0">
               <widget class="QLabel" name="label_2">
                <property name="text">
-                <string>启动任务管理器</string>
+                <string>隐藏当前窗口</string>
                </property>
               </widget>
              </item>
@@ -540,37 +552,30 @@
             <number>0</number>
            </property>
            <property name="verticalSpacing">
-            <number>1</number>
+            <number>2</number>
            </property>
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="checkBox">
+           <item row="3" column="0">
+            <widget class="QCheckBox" name="checkBox_7">
              <property name="text">
-              <string>隐藏托盘</string>
+              <string>禁止极域置顶</string>
              </property>
             </widget>
            </item>
-           <item row="9" column="0">
-            <widget class="QLabel" name="label_17">
-             <property name="text">
-              <string>杀进程方案:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="8" column="0">
+           <item row="9" column="2">
             <widget class="QLabel" name="label_16">
              <property name="text">
-              <string>极域路径修改</string>
+              <string>窗口不透明度  </string>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
-            <widget class="QCheckBox" name="checkBox_3">
+           <item row="3" column="3">
+            <widget class="QCheckBox" name="checkBox_6">
              <property name="text">
-              <string>禁用QSS</string>
+              <string>拦截时不弹窗</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="2">
+           <item row="1" column="3" colspan="2">
             <widget class="QCheckBox" name="checkBox_4">
              <property name="text">
               <string>允许教师截屏</string>
@@ -580,38 +585,34 @@
              </property>
             </widget>
            </item>
-           <item row="7" column="0" colspan="3">
-            <widget class="Line" name="line_4">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+           <item row="2" column="3" colspan="2">
+            <widget class="QCheckBox" name="checkBox_5">
+             <property name="text">
+              <string>禁用随机窗口名</string>
              </property>
             </widget>
            </item>
-           <item row="8" column="1" colspan="2">
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
-             <item>
-              <widget class="QLineEdit" name="TopDomainLocationSet">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QToolButton" name="toolButton">
-               <property name="text">
-                <string>...</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="checkBox">
+             <property name="text">
+              <string>隐藏托盘</string>
+             </property>
+            </widget>
            </item>
-           <item row="10" column="0" colspan="3">
+           <item row="9" column="0">
+            <widget class="QLabel" name="label_17">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>杀进程方案:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="12" column="0" colspan="5">
             <layout class="QHBoxLayout" name="horizontalLayout_5">
              <item>
               <widget class="QRadioButton" name="radioButton">
@@ -639,17 +640,31 @@
              </item>
             </layout>
            </item>
-           <item row="2" column="0" colspan="2">
+           <item row="1" column="2">
+            <widget class="QCheckBox" name="checkBox_3">
+             <property name="text">
+              <string>禁用QSS</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" colspan="3">
             <widget class="QCheckBox" name="checkBox_2">
              <property name="text">
               <string>修改窗口化时自缩放</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="2">
-            <widget class="QCheckBox" name="checkBox_5">
-             <property name="text">
-              <string>禁用随机窗口名</string>
+           <item row="9" column="3" colspan="2">
+            <widget class="QSlider" name="horizontalSlider">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="1">
+            <widget class="Line" name="line_3">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
              </property>
             </widget>
            </item>
@@ -723,7 +738,7 @@
         <item row="4" column="0">
          <widget class="QLabel" name="label_14">
           <property name="text">
-           <string>&lt;a href=&quot;https://github.com/lyxofficial/notopdomain/releases&quot;&gt;查看历史版本&lt;/a&gt;</string>
+           <string>&lt;a href=&quot;https://github.com/lyxofficial/NoTopDomain/releases&quot;&gt;查看历史版本&lt;/a&gt;</string>
           </property>
           <property name="openExternalLinks">
            <bool>true</bool>
@@ -754,6 +769,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="pushButton_3">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>重启并应用更新</string>
              </property>
@@ -833,8 +851,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>345</width>
-     <height>22</height>
+     <width>354</width>
+     <height>23</height>
     </rect>
    </property>
   </widget>

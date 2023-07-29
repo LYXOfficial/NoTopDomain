@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <cstdio>
 #include <tlhelp32.h>
+#include "MinHook.h"
 using namespace std;
 HOOKPROC HookProc(int nCode,WPARAM wParam,LPARAM lParam){
     return 0;
@@ -15,6 +16,7 @@ extern"C" {
     int StartMythware(LPWSTR location);
     bool GetWindowRightMenu(HWND hwnd);
     bool KillProcessByThread(int pid);
+    void InjectDLL(DWORD pid,LPCSTR path);
 }
 void UnlockKeyboard(){
     HHOOK kbdHook=SetWindowsHookEx(WH_KEYBOARD_LL,(HOOKPROC)HookProc,GetModuleHandle(NULL),0);
@@ -90,7 +92,7 @@ int StartMythware(LPWSTR location){
     PROCESS_INFORMATION pi;
     ZeroMemory(&si, sizeof(STARTUPINFOW));
     si.cb = sizeof(STARTUPINFOW);
-    si.lpDesktop = L"winsta0\\default";
+    si.lpDesktop = (wchar_t*)L"winsta0\\default";
     auto res=CreateProcessWithTokenW(token, LOGON_NETCREDENTIALS_ONLY, NULL, location, NORMAL_PRIORITY_CLASS | CREATE_NEW_PROCESS_GROUP, NULL, NULL, &si, &pi);
     CloseHandle(token);
     if(!res) return 1;
@@ -114,7 +116,18 @@ bool KillProcessByThread(int pid){
     }
     return false;
 }
+void InjectDLL(DWORD dwId,LPCSTR path){
+    printf("%s\n",path);
+    HANDLE mProcess=OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwId);
+    LPTHREAD_START_ROUTINE fun =(LPTHREAD_START_ROUTINE)LoadLibraryA;
+    SIZE_T pathSize=strlen(path)+1;
+    LPVOID mBuffer=VirtualAllocEx(mProcess, NULL, pathSize, MEM_COMMIT, PAGE_READWRITE);
+    WriteProcessMemory(mProcess, mBuffer, path, pathSize, NULL);
+    CreateRemoteThread(mProcess, NULL, 0, fun, mBuffer, 0, NULL);
+    return;
+}
 int main(){
+    // CallDLLInject(114,2);
     // StartMythware(L"explorer.exe");
     // GetMythwarePasswordFromRegedit();
 	return 0;
