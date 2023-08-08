@@ -21,7 +21,7 @@ rPostMessageA realPostMessageA=(rPostMessageA)&PostMessageA;
 rPostMessageW realPostMessageW=(rPostMessageW)&PostMessageW;
 rSetWindowPos realSetWindowPos=(rSetWindowPos)&SetWindowPos;
 BOOL WINAPI fakeCreateProcessA(LPCSTR lpApplicationName, LPSTR lpCommandLine, LPSECURITY_ATTRIBUTES lpProcessAttributes, LPSECURITY_ATTRIBUTES lpThreadAttributes, BOOL bInheritHandles, DWORD dwCreationFlags, LPVOID lpEnvironment, LPCSTR lpCurrentDirectory, LPSTARTUPINFOA lpStartupInfo, LPPROCESS_INFORMATION lpProcessInformation){
-    if(strstr(lpCommandLine,"explorer")) 
+    if(strstr(lpCommandLine,"explorer")||strstr(lpCommandLine,"TDChalk"))
         return realCreateProcessA(lpApplicationName,
         lpCommandLine,lpProcessAttributes,lpThreadAttributes,bInheritHandles
         ,dwCreationFlags,lpEnvironment,lpCurrentDirectory,lpStartupInfo,
@@ -47,7 +47,7 @@ BOOL WINAPI fakeCreateProcessA(LPCSTR lpApplicationName, LPSTR lpCommandLine, LP
     else return 1;
 }
 BOOL WINAPI fakeCreateProcessW(LPCWSTR lpApplicationName, LPWSTR lpCommandLine, LPSECURITY_ATTRIBUTES lpProcessAttributes, LPSECURITY_ATTRIBUTES lpThreadAttributes, WINBOOL bInheritHandles, DWORD dwCreationFlags, LPVOID lpEnvironment, LPCWSTR lpCurrentDirectory, LPSTARTUPINFOW lpStartupInfo, LPPROCESS_INFORMATION lpProcessInformation){
-    if(wcsstr(lpCommandLine,L"explorer")) 
+    if(wcsstr(lpCommandLine,L"explorer")||wcsstr(lpCommandLine,L"TDChalk"))
         return realCreateProcessW(lpApplicationName,
         lpCommandLine,lpProcessAttributes,lpThreadAttributes,bInheritHandles
         ,dwCreationFlags,lpEnvironment,lpCurrentDirectory,lpStartupInfo,
@@ -73,7 +73,7 @@ BOOL WINAPI fakeCreateProcessW(LPCWSTR lpApplicationName, LPWSTR lpCommandLine, 
     else return 1;
 }
 UINT WINAPI fakeWinExec(LPCSTR lpCmdLine, UINT uCmdShow){
-    if(strstr(lpCmdLine,"explorer")) return realWinExec(lpCmdLine,uCmdShow);
+    if(strstr(lpCmdLine,"explorer")||strstr(lpCmdLine,"TDChalk")) return realWinExec(lpCmdLine,uCmdShow);
     int can;
     char r[1005];
     char* rr=getenv("temp");
@@ -262,22 +262,22 @@ BOOL APIENTRY DllMain(HMODULE hModule,DWORD dReason,LPVOID lpReserved){
                 reinterpret_cast<void**>(&realTerminateProcess))!=MH_OK)
                     return FALSE;
             if(MH_EnableHook((PVOID*)&TerminateProcess)!=MH_OK) return FALSE;
-            // if(MH_CreateHook((PVOID*)&SendMessageA,(PVOID*)&fakeSendMessageA,
-            //     reinterpret_cast<void**>(&realSendMessageA))!=MH_OK)
-            //         return FALSE;
-            // if(MH_EnableHook((PVOID*)&SendMessageA)!=MH_OK) return FALSE;
-            // if(MH_CreateHook((PVOID*)&SendMessageW,(PVOID*)&fakeSendMessageW,
-            //     reinterpret_cast<void**>(&realSendMessageW))!=MH_OK)
-            //         return FALSE;
-            // if(MH_EnableHook((PVOID*)&SendMessageW)!=MH_OK) return FALSE;
-            // if(MH_CreateHook((PVOID*)&PostMessageA,(PVOID*)&fakePostMessageA,
-            //     reinterpret_cast<void**>(&realPostMessageA))!=MH_OK)
-            //         return FALSE;
-            // if(MH_EnableHook((PVOID*)&PostMessageA)!=MH_OK) return FALSE;
-            // if(MH_CreateHook((PVOID*)&PostMessageW,(PVOID*)&fakePostMessageW,
-            //     reinterpret_cast<void**>(&realPostMessageW))!=MH_OK)
-            //         return FALSE;
-            // if(MH_EnableHook((PVOID*)&PostMessageW)!=MH_OK) return FALSE;
+            if(MH_CreateHook((PVOID*)&SendMessageA,(PVOID*)&fakeSendMessageA,
+                reinterpret_cast<void**>(&realSendMessageA))!=MH_OK)
+                    return FALSE;
+            if(MH_EnableHook((PVOID*)&SendMessageA)!=MH_OK) return FALSE;
+            if(MH_CreateHook((PVOID*)&SendMessageW,(PVOID*)&fakeSendMessageW,
+                reinterpret_cast<void**>(&realSendMessageW))!=MH_OK)
+                    return FALSE;
+            if(MH_EnableHook((PVOID*)&SendMessageW)!=MH_OK) return FALSE;
+            if(MH_CreateHook((PVOID*)&PostMessageA,(PVOID*)&fakePostMessageA,
+                reinterpret_cast<void**>(&realPostMessageA))!=MH_OK)
+                    return FALSE;
+            if(MH_EnableHook((PVOID*)&PostMessageA)!=MH_OK) return FALSE;
+            if(MH_CreateHook((PVOID*)&PostMessageW,(PVOID*)&fakePostMessageW,
+                reinterpret_cast<void**>(&realPostMessageW))!=MH_OK)
+                    return FALSE;
+            if(MH_EnableHook((PVOID*)&PostMessageW)!=MH_OK) return FALSE;
             if(MH_CreateHook((PVOID*)&SetWindowPos,(PVOID*)&fakeSetWindowPos,
                 reinterpret_cast<void**>(&realSetWindowPos))!=MH_OK)
                     return FALSE;

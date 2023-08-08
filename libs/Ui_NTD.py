@@ -16,7 +16,7 @@ class Ui_NoTopDomain(object):
         NoTopDomain.setObjectName("NoTopDomain")
         NoTopDomain.resize(354, 414)
         font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei UI Light")
+        font.setFamily("Microsoft YaHei")
         font.setPointSize(9)
         NoTopDomain.setFont(font)
         self.centralwidget = QtWidgets.QWidget(NoTopDomain)

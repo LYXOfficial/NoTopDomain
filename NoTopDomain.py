@@ -3,7 +3,7 @@
 '''
 QwQ (。・ω・。)
 
-NoTopDomain v2.4
+NoTopDomain v2.4.2
 !!
 某蒟蒻的垃圾代码
 '''
@@ -40,7 +40,7 @@ from pynput import *
 
 # 这是 using namespace std; 后遗症罢（
 
-VERSION="v2.4"
+VERSION="v2.4.2"
 DEBUG=FALSE
 class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     sw=pyqtSignal()
@@ -201,10 +201,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.action_5.triggered.connect(lambda:os._exit(0) if self.question("提示","退出程序吗？")==16384 else 0)
         self.topLabel=QLabel("")
         self.topLabel.setWindowFlag(Qt.SplashScreen)
-        self.topLabel.setStyleSheet("font-family:\"Microsoft YaHei UI Light\";padding:5px;background:white;border:1px solid;border-radius:3px")
+        self.topLabel.setStyleSheet("font-family:\"Microsoft YaHei\";padding:5px;background:white;border:1px solid;border-radius:3px")
         self.topLabel2=QLabel("")
         self.topLabel2.setWindowFlag(Qt.SplashScreen)
-        self.topLabel2.setStyleSheet("font-family:\"Microsoft YaHei UI Light\";padding:5px;background:white;border:1px solid;border-radius:3px")
+        self.topLabel2.setStyleSheet("font-family:\"Microsoft YaHei\";padding:5px;background:white;border:1px solid;border-radius:3px")
         self.tltimer=QTimer()
         self.tltimer.setInterval(2000)
         self.tltimer.timeout.connect(self.hidelb)

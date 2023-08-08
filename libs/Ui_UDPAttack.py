@@ -17,7 +17,7 @@ class Ui_UDPAttacker(object):
         UDPAttacker.resize(300, 471)
         UDPAttacker.setMaximumSize(QtCore.QSize(500, 600))
         font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei UI Light")
+        font.setFamily("Microsoft YaHei")
         UDPAttacker.setFont(font)
         self.gridLayout = QtWidgets.QGridLayout(UDPAttacker)
         self.gridLayout.setContentsMargins(-1, -1, 0, -1)

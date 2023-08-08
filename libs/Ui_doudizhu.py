@@ -23,7 +23,7 @@ class Ui_Form(object):
         self.gridLayout.setObjectName("gridLayout")
         self.label = QtWidgets.QLabel(Form)
         font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei UI Light")
+        font.setFamily("Microsoft YaHei")
         font.setPointSize(22)
         self.label.setFont(font)
         self.label.setObjectName("label")

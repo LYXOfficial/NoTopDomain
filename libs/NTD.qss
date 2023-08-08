@@ -1,5 +1,5 @@
 QMainWindow *{
-	font-family:"Microsoft YaHei UI Light";
+	font-family:"Microsoft YaHei","Microsoft YaHei";
 }
 #centralwidget{
 	margin-top:0;
@@ -74,7 +74,7 @@ QGroupBox{
 	border-radius:5px;
 	border:1px solid #ccc;
 	padding-top:15px;
-	font-family:"Microsoft YaHei UI";
+	font-family:"Microsoft YaHei";
 }
 QGroupBox::title{
 	subcontrol-origin:margin;
