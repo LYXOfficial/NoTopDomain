@@ -100,10 +100,13 @@ BOOL WINAPI fakeTerminateProcess(HANDLE hProcess, UINT uExitCode){
     fscanf(fi,"%d",&can);
     fclose(fi);
     if(can) return 1;
-    char res1[10],rres[10005],res2[10005],res3[1005];
+    char res1[10],rres[10005],res3[1005],res4[1005];
+    char* res2;
     strcpy(rres,"检测到极域正尝试杀掉该进程：\n");
     itoa(GetProcessId(hProcess),res1,10);
-    GetProcessImageFileNameA(hProcess,res2,1005);
+    GetProcessImageFileNameA(hProcess,res4,1005);
+    strrev(res4);res2=strtok(res4,"\\");
+    strrev(res2);
     if(strstr(res2,"explorer")) return TerminateProcess(hProcess,uExitCode);
     strcat(rres,res2);
     strcat(rres,"\nPID：");
@@ -127,19 +130,21 @@ BOOL WINAPI fakeSendMessageA(HWND hWnd,UINT Msg,
         fclose(fi);
         if(can) return 0;
         if(Msg==WM_CLOSE){
-            char res1[10],rres[10005],res2[10005],res3[1005];
+            char res1[10],rres[10005],res3[1005],res4[1005];
+            char* res2;
             DWORD pId;
             GetWindowThreadProcessId(hWnd,&pId);
             strcpy(rres,"检测到极域正尝试关闭该进程的窗口：\n");
             itoa(pId,res1,10);
-            GetProcessImageFileNameA(OpenProcess(PROCESS_ALL_ACCESS,0,pId),res2,1005);
+            GetProcessImageFileNameA(OpenProcess(PROCESS_ALL_ACCESS,0,pId),res4,1005);
+            strrev(res4);res2=strtok(res4,"\\");strrev(res2);
+            if(strstr(res2,"StudentMain")||strstr(res2,"studentmain")) return realSendMessageA(hWnd,Msg,wParam,lParam);
             strcat(rres,res2);
             strcat(rres,"\nPID：");
             strcat(rres,res1);
             strcat(rres,"\n要继续吗？");
-            if(MessageBoxA(0,rres,"NoTopDomain 警告",MB_ICONWARNING|MB_YESNO)==IDNO){
+            if(MessageBoxA(0,rres,"NoTopDomain 警告",MB_ICONWARNING|MB_YESNO)==IDNO)
                 return 0;
-            }
         }
         return realSendMessageA(hWnd,Msg,wParam,lParam);
 }
@@ -155,12 +160,15 @@ BOOL WINAPI fakeSendMessageW(HWND hWnd,UINT Msg,
         fclose(fi);
         if(can) return 0;
         if(Msg==WM_CLOSE){
-            char res1[10],rres[10005],res2[10005],res3[1005];
+            char res1[10],rres[10005],res4[10005],res3[1005];
+            char* res2;
             DWORD pId;
             GetWindowThreadProcessId(hWnd,&pId);
             strcpy(rres,"检测到极域正尝试关闭该进程的窗口：\n");
             itoa(pId,res1,10);
-            GetProcessImageFileNameA(OpenProcess(PROCESS_ALL_ACCESS,0,pId),res2,1005);
+            GetProcessImageFileNameA(OpenProcess(PROCESS_ALL_ACCESS,0,pId),res4,1005);
+            strrev(res4);res2=strtok(res4,"\\");strrev(res2);
+            if(strstr(res2,"StudentMain")||strstr(res2,"studentmain")) return realSendMessageW(hWnd,Msg,wParam,lParam);
             strcat(rres,res2);
             strcat(rres,"\nPID：");
             strcat(rres,res1);
@@ -183,12 +191,15 @@ BOOL WINAPI fakePostMessageA(HWND hWnd,UINT Msg,
         fclose(fi);
         if(can) return 0;
         if(Msg==WM_CLOSE){
-            char res1[10],rres[10005],res2[10005],res3[1005];
+            char res1[10],rres[10005],res4[10005],res3[1005];
+            char* res2;
             DWORD pId;
             GetWindowThreadProcessId(hWnd,&pId);
             strcpy(rres,"检测到极域正尝试关闭该进程的窗口：\n");
             itoa(pId,res1,10);
-            GetProcessImageFileNameA(OpenProcess(PROCESS_ALL_ACCESS,0,pId),res2,1005);
+            GetProcessImageFileNameA(OpenProcess(PROCESS_ALL_ACCESS,0,pId),res4,1005);
+            strrev(res4);res2=strtok(res4,"\\");strrev(res2);
+            if(strstr(res2,"StudentMain")||strstr(res2,"studentmain")) return realPostMessageA(hWnd,Msg,wParam,lParam);
             strcat(rres,res2);
             strcat(rres,"\nPID：");
             strcat(rres,res1);
@@ -211,12 +222,15 @@ BOOL WINAPI fakePostMessageW(HWND hWnd,UINT Msg,
         fclose(fi);
         if(can) return 0;
         if(Msg==WM_CLOSE){
-            char res1[10],rres[10005],res2[10005],res3[1005];
+            char res1[10],rres[10005],res4[10005],res3[1005];
+            char* res2;
             DWORD pId;
             GetWindowThreadProcessId(hWnd,&pId);
             strcpy(rres,"检测到极域正尝试关闭该进程的窗口：\n");
             itoa(pId,res1,10);
-            GetProcessImageFileNameA(OpenProcess(PROCESS_ALL_ACCESS,0,pId),res2,1005);
+            GetProcessImageFileNameA(OpenProcess(PROCESS_ALL_ACCESS,0,pId),res4,1005);
+            strrev(res4);res2=strtok(res4,"\\");strrev(res2);
+            if(strstr(res2,"StudentMain")||strstr(res2,"studentmain")) return realPostMessageW(hWnd,Msg,wParam,lParam);
             strcat(rres,res2);
             strcat(rres,"\nPID：");
             strcat(rres,res1);
@@ -237,7 +251,7 @@ BOOL WINAPI fakeSetWindowPos(HWND hWnd,HWND hWndInsertAfter,int X,int Y,
         FILE* fi=fopen(r,"r");
         fscanf(fi,"%*d %d",&can);
         fclose(fi);
-        if(can) return realSetWindowPos(hWnd,HWND_NOTOPMOST,X,Y,cx,cy,uFlags);
+        if(can) return realSetWindowPos(hWnd,HWND_NOTOPMOST,X,Y,cx,cy,~((~uFlags)|SWP_NOZORDER));
         else return realSetWindowPos(hWnd,hWndInsertAfter,X,Y,cx,cy,uFlags);
     }
 BOOL APIENTRY DllMain(HMODULE hModule,DWORD dReason,LPVOID lpReserved){

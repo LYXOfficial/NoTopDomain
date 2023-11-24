@@ -4,6 +4,7 @@ from PyQt5.QtGui import *
 from ctypes import *
 from win32gui import *
 from win32con import *
+from win32api import *
 from . import Ui_Moyu
 # import Ui_Moyu
 import sys,random
@@ -166,7 +167,9 @@ class Moyu(QWidget,Ui_Moyu.Ui_Moyu2048):
             self.hs=int(open("NTD2048HighScore","r+").read())
         except:
             self.hs=0
-            try: open("NTD2048HighScore","w+").close()
+            try: 
+                open("NTD2048HighScore","w+").close()
+                SetFileAttributes("NTD2048HighScore",FILE_ATTRIBUTE_HIDDEN)
             except: pass
         self.lcdNumber.display(self.hs)
         self.tim=0
@@ -240,20 +243,18 @@ class Moyu(QWidget,Ui_Moyu.Ui_Moyu2048):
             for j in range(4):
                 eval("self.b%d_%d.setText(mp[self.matrix[%d][%d]])"%(i+1,j+1,i,j))
                 eval("self.b%d_%d.setStyleSheet('color:white;background:%s;border:1px solid gray;border-radius:8px;font-size:24px;font-family:\"Microsoft YaHei\"')"%(i+1,j+1,color[self.matrix[i][j]]))
-        flag=0
+        akflag,fullflag=0,1
         for i in range(4):
             for j in range(4):
                 if self.matrix[i][j]>=2048:
-                    flag=2
-                if flag: break
-                if flag!=2 and not self.matrix[i][j]:
-                    flag=1
-                if flag: break
-        if flag==2 and not self.can:
+                    akflag=1
+                if not self.matrix[i][j]:
+                    fullflag=0
+        if akflag and not self.can:
             QMessageBox.information(self,"提示","You AK IOI！RP：%d"%nscore)
             self.can=1
-        if not flag:
-            fx,fy,flag2=[1,-1,0,0],[0,0,1,-1],1
+        if fullflag:
+            fx,fy=[1,-1,0,0],[0,0,1,-1]
             for i in range(4):
                 for j in range(4):
                     for k in range(4):
@@ -261,24 +262,22 @@ class Moyu(QWidget,Ui_Moyu.Ui_Moyu2048):
                         if nx>3 or nx<0 or ny>3 or ny<0:
                             continue
                         if self.matrix[i][j]==self.matrix[nx][ny]:
-                            flag2=0
-                            break
+                            return
                         elif self.matrix[i][j]<0 and self.matrix[nx][ny]>0:
-                            flag2=0
-                            break
+                            return
                         elif self.matrix[nx][ny]<0 and self.matrix[i][j]>0:
-                            flag2=0
-                            break
-            if flag2:
-                self.switchGame()
-                self.flag=1
-                QMessageBox.information(self,"提示","您AFO了！RP：%d"%nscore)
+                            return
+            self.switchGame()
+            self.flag=1
+            QMessageBox.information(self,"提示","您AFO了！RP：%d"%nscore)
     def init(self):
         self.matrix=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
         self.matrix=add_two(self.matrix)
         self.matrix=add_two(self.matrix)
+        
         self.update()
     def restart(self):
+        global nscore
         self.timer.stop()
         self.tim=0
         nscore=0

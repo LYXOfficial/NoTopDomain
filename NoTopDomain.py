@@ -3,7 +3,12 @@
 '''
 QwQ (。・ω・。)
 
-NoTopDomain v2.4.2
+NoTopDomain v2.5b3
+
+很多屎山的awa
+
+可以找到"shellsMaybeYouUse"来跑打包（（（
+
 !!
 某蒟蒻的垃圾代码
 '''
@@ -38,9 +43,9 @@ from libs.moyu import *
 from platform import *
 from pynput import *
 
-# 这是 using namespace std; 后遗症罢（
+# 全都不打库名qwq using namespace std;
 
-VERSION="v2.4.2"
+VERSION="v2.5b3"
 DEBUG=FALSE
 class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     sw=pyqtSignal()
@@ -51,6 +56,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     ff=pyqtSignal()
     ts=pyqtSignal()
     gud=pyqtSignal()
+    sc=pyqtSignal()
     vv=pyqtSignal(int)
     sm=pyqtSignal(int,int)
     cm=pyqtSignal(int,int)
@@ -76,8 +82,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.setWindowTitle("NoTopDomain %s"%VERSION)
         self.st.connect(self.hideWindow)
         self.kf.connect(self.killFocus)
+        self.sc.connect(self.stopCap)
         self.horizontalSlider.setMinimum(30)
         self.horizontalSlider.setValue(100)
+        self.capWindow.clicked.connect(self.getWindow)
         self.horizontalSlider.valueChanged.connect(lambda:
             (self.setWindowOpacity(self.horizontalSlider.value()/100),
              self.moyu.setWindowOpacity(self.horizontalSlider.value()/100),
@@ -131,11 +139,13 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.zb.start()
         self.vv.connect(self.verifyUnis)
         self.widget.hide()
+        self.floatwin=QLabel()
+        self.floatwin.setWindowFlags(Qt.FramelessWindowHint|Qt.WindowTransparentForInput|Qt.WindowStaysOnTopHint)
+        self.floatwin.setWindowOpacity(0.8)
+        self.floatwin.setAttribute(Qt.WA_ShowWithoutActivating,1)
+        self.floatwin.setStyleSheet("border:1px solid black;font-family:\"Microsoft Yahei\";")
         self.fb=Feedbacker(self)
-        if self.checkBox_4.isChecked():
-            windll.user32.SetWindowDisplayAffinity(int(self.fb.winId()),0)
-        else:
-            windll.user32.SetWindowDisplayAffinity(int(self.fb.winId()),0x11)
+        windll.user32.SetWindowDisplayAffinity(int(self.fb.winId()),0x11)
         self.checkBox_5.clicked.connect(self.switchTitle)
         SetWindowPos(self.fb.winId(),HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE)
         self.logLabel=QLabel()
@@ -192,10 +202,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.action_1=QAction("关于")
         self.action_4=QAction("日志")
         self.feedback=QAction("反馈")
-        self.action_3=QAction("启动TSK")
+        self.action_3=QAction("TSK")
         self.action_6=QAction("摸鱼")
         self.action_7=QAction("攻击")
-        self.action_5=QAction("退出程序")
+        self.action_5=QAction("退出")
         self.action_7.triggered.connect(self.gjW.showE)
         self.action_6.triggered.connect(self.moyu.showE)
         self.action_5.triggered.connect(lambda:os._exit(0) if self.question("提示","退出程序吗？")==16384 else 0)
@@ -226,9 +236,14 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.tray=QSystemTrayIcon(self.windowIcon())
         self.tray.setToolTip("NoTopDomain")
         self.trayMenu=QMenu(self)
+        self.openFolderIcon.clicked.connect(self.openIconFile)
         if not self.config.get("QssDisabled"):
             self.trayMenu.setStyleSheet(menuqss)
         self.showHelp()
+        self.topThisWindow.clicked.connect(lambda:self.setTop(mode=1))
+        self.hideThisWindow.clicked.connect(lambda:self.hideWindow(mode=1))
+        self.killThisWindow.clicked.connect(lambda:self.killFocus(mode=1))
+        self.changeThisWindowTitle.clicked.connect(lambda: (SetWindowText(self.nowhwnd,self.newWindowTitle.text()),self.log("修改窗口标题成功："+self.newWindowTitle.text())) if IsWindow(self.nowhwnd) else self.log("窗口句柄无效"))
         self.a0=QAction("NoTopDomain %s"%VERSION)
         self.a0.setEnabled(False)
         self.a1=QAction("显示/隐藏主界面")
@@ -278,10 +293,19 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.logLabel.setMaximumWidth(self.width()-10)
         self.logLabel.setMinimumWidth(self.width()-10)
         self.logLabel.setWordWrap(1)
+        self.resetTitle.clicked.connect(lambda:self.newWindowTitle.setText(self.oldname))
         self.NoControl.clicked.connect(self.unRemoteControl)
         self.statusbar.addWidget(self.logLabel)
         self.NoImg.clicked.connect(self.noImg)
         self.NoBlackScreen.clicked.connect(self.nbs)
+        self.changeNormalIcon.clicked.connect(lambda:(
+            SendMessage(self.nowhwnd,WM_SETICON,ICON_SMALL,LoadIcon(NULL,IDI_APPLICATION)),
+            SendMessage(self.nowhwnd,WM_SETICON,ICON_BIG,LoadIcon(NULL,IDI_APPLICATION)),
+            self.log("设置默认图标成功")) if IsWindow(self.nowhwnd) else self.log("窗口句柄无效"))
+        self.resetIcon.clicked.connect(lambda:(
+            SendMessage(self.nowhwnd,WM_SETICON,ICON_SMALL,self.oldiconsmall),
+            SendMessage(self.nowhwnd,WM_SETICON,ICON_BIG,self.oldiconbig),
+            self.log("恢复图标成功")) if IsWindow(self.nowhwnd) else self.log("窗口句柄无效"))
         self.USBYes.clicked.connect(lambda:Thread(target=self.usbYes).start())
         self.tray.activated.connect(self.activate)
         SetWindowPos(self.winId(),HWND_TOPMOST,self.x(),self.y(),self.width(),self.height(),SWP_NOSIZE|SWP_NOZORDER)
@@ -308,6 +332,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.startupinfo = su.STARTUPINFO()
         self.startupinfo.wShowWindow = su.SW_HIDE
         self.startupinfo.dwFlags = su.STARTF_USESHOWWINDOW
+        
     # def getRealResolution(self):
     #     hDC=GetDC(0)
     #     wide=GetDeviceCaps(hDC,DESKTOPHORZRES)
@@ -343,20 +368,26 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     def noremoterun(self):
         try:
             if self.NoRemoteRun.isChecked():
-                if self.question("提示","此功能为测试功能，尚不稳定，\
-开启后会自动在极域运行远程命令和杀掉进程时弹框确认，可能出现各种失败，继续吗？")\
+                if self.question("提示","此功能尚不稳定，\
+开启后会自动在极域运行远程命令和杀掉进程时弹框确认，可能出现各种失败，继续吗？\n\
+如果因此被掉线导致您当场寄掉，这个蒟蒻可是不负责任的呢awa")\
                 ==16384:
                     if not self.TDState:
                         self.log("未启动极域")
+                        self.NoRemoteRun.setChecked(0)
                         return
                     it=process_iter()
                     for i in it:
                         if i.name().lower()=="studentmain.exe":
                             if not su.run(os.getenv("temp")+"\\NTDHookRunner.exe --pid="+str(i.pid),stdout=su.PIPE).returncode:
                                 self.log("设置极域系统函数钩子成功")
-                            else: self.log("设置极域系统函数钩子失败")
-            else: self.log("暂不支持解除，取消仅可用于重置该功能状态")
-        except: self.log("设置极域系统函数钩子失败")
+                                self.NoRemoteRun.setEnabled(0)
+                            else: 
+                                self.log("设置极域系统函数钩子失败")
+                                self.NoRemoteRun.setChecked(False)
+        except: 
+            self.log("设置极域系统函数钩子失败")
+            self.NoRemoteRun.setChecked(False)
     def switchTitle(self):
         global flag6
         flag6=not self.checkBox_5.isChecked()
@@ -387,59 +418,147 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             self.log("下载完成")
         except:
             self.log("下载失败")
-    def hideWindow(self):
-        hwnd=GetForegroundWindow()
-        if hwnd==int(self.winId()) or hwnd==int(self.topLabel2.winId()) or hwnd==int(self.gjW.winId()) or hwnd==int(self.moyu.winId()):
-            self.log("触发进程保护...")
-            return
-        ptr=pointer(c_int(0))
-        if windll.user32.GetWindowDisplayAffinity(hwnd,ptr):
+    def hideWindow(self,mode=0):
+        if mode:
+            hwnd=self.nowhwnd
+        else: hwnd=GetForegroundWindow()
+        try:
+            if hwnd==int(self.winId()) or hwnd==int(self.topLabel2.winId()) or hwnd==int(self.gjW.winId()) or hwnd==int(self.moyu.winId()):
+                self.log("触发进程保护...")
+                return
+            ptr=pointer(c_int(0))
+            if windll.user32.GetWindowDisplayAffinity(hwnd,ptr):
+                pid=GetWindowThreadProcessId(hwnd)[1]
+                if ptr.contents.value:
+                    if GetNativeSystemInfo()[0]==9 and not IsWow64Process(OpenProcess(PROCESS_ALL_ACCESS,0,pid)):
+                        Tools.InjectDLL(pid,bytes(os.getenv("temp")+"\\NTDShower.dll","utf-8"))
+                    else:
+                        run(os.getenv("temp")+"\\NTDHide32Runner.exe --pid=%d --type=%d"%(pid,0),stdout=su.PIPE)
+                    Sleep(100)
+                    ptr2=pointer(c_int(0))
+                    windll.user32.GetWindowDisplayAffinity(hwnd,ptr2)
+                    if ptr2.contents.value!=ptr.contents.value:
+                        self.topLabel2.setText("显示窗口成功")
+                        self.log("显示窗口成功")
+                    else: 
+                        self.topLabel2.setText("显示窗口失败")
+                        self.log("显示窗口失败")
+                    self.topLabel2.show()
+                    x,y,_,__=GetWindowRect(hwnd)
+                    SetWindowPos(self.topLabel2.winId(),HWND_TOPMOST,x+10,y+10,0,0,SWP_NOSIZE)
+                    SetForegroundWindow(hwnd)
+                    if self.checkBox_4.isChecked():
+                        windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0)
+                    else:
+                        windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0x11)
+                    self.tl2timer.start()
+                else:
+                    if GetNativeSystemInfo()[0]==9 and not IsWow64Process(OpenProcess(PROCESS_ALL_ACCESS,0,pid)):
+                        Tools.InjectDLL(pid,bytes(os.getenv("temp")+"\\NTDHider.dll","utf-8"))
+                    else:
+                        run(os.getenv("temp")+"\\NTDHide32Runner.exe --pid=%d --type=%d"%(pid,1),stdout=PIPE)
+                    Sleep(100)
+                    ptr2=pointer(c_int(0))
+                    windll.user32.GetWindowDisplayAffinity(hwnd,ptr2)
+                    if ptr2.contents.value!=ptr.contents.value:
+                        self.topLabel2.setText("隐藏窗口成功")
+                        self.log("隐藏窗口成功")
+                    else:
+                        self.topLabel2.setText("隐藏窗口失败")
+                        self.log("隐藏窗口失败")
+                    self.topLabel2.show()
+                    x,y,_,__=GetWindowRect(hwnd)
+                    SetWindowPos(self.topLabel2.winId(),HWND_TOPMOST,x+10,y+10,0,0,SWP_NOSIZE)
+                    if self.checkBox_4.isChecked():
+                        windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0)
+                    else:
+                        windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0x11)
+                    self.tl2timer.start()
+            if mode:
+                if self.hideThisWindow.text()=="隐藏此窗口" and ptr2.contents.value!=ptr.contents.value:
+                    self.hideThisWindow.setText("显示此窗口")
+                elif self.hideThisWindow.text()=="显示此窗口" and ptr2.contents.value!=ptr.contents.value:
+                    self.hideThisWindow.setText("隐藏此窗口")
+        except: self.log("窗口句柄错误")
+    def getWindow(self):
+        self.capWindow.setEnabled(0)
+        self.topThisWindow.setEnabled(0)
+        self.hideThisWindow.setEnabled(0)
+        self.killThisWindow.setEnabled(0)
+        self.changeThisWindowTitle.setEnabled(0)
+        self.newWindowTitle.setEnabled(0)
+        self.resetTitle.setEnabled(0)
+        self.changeNormalIcon.setEnabled(0)
+        self.openFolderIcon.setEnabled(0)
+        self.resetIcon.setEnabled(0)
+        self.captimer=QTimer()
+        self.captimer.setInterval(100)
+        self.captimer.timeout.connect(self.showCapture)
+        self.captimer.start()
+        self.log("开始捕获窗口")
+        self.floatwin.show()
+        self.hk.register(("control","alt","p"),callback=lambda _:self.sc.emit(),overwrite=1)
+    def showCapture(self):
+        try:
+            hwnd=GetForegroundWindow()
             pid=GetWindowThreadProcessId(hwnd)[1]
-            if ptr.contents.value:
-                if GetNativeSystemInfo()[0]==9 and not IsWow64Process(OpenProcess(PROCESS_ALL_ACCESS,0,pid)):
-                    Tools.InjectDLL(pid,bytes(os.getenv("temp")+"\\NTDShower.dll","utf-8"))
-                else:
-                    run(os.getenv("temp")+"\\NTDHide32Runner.exe --pid=%d --type=%d"%(pid,0),stdout=su.PIPE)
-                Sleep(100)
-                ptr2=pointer(c_int(0))
-                windll.user32.GetWindowDisplayAffinity(hwnd,ptr2)
-                if ptr2.contents.value!=ptr.contents.value:
-                    self.topLabel2.setText("显示窗口成功")
-                    self.log("显示窗口成功")
-                else: 
-                    self.topLabel2.setText("显示窗口失败")
-                    self.log("显示窗口失败")
-                self.topLabel2.show()
-                x,y,_,__=GetWindowRect(hwnd)
-                SetWindowPos(self.topLabel2.winId(),HWND_TOPMOST,x+10,y+10,0,0,SWP_NOSIZE)
-                SetForegroundWindow(hwnd)
-                if self.checkBox_4.isChecked():
-                    windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0)
-                else:
-                    windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0x11)
-                self.tl2timer.start()
-            else:
-                if GetNativeSystemInfo()[0]==9 and not IsWow64Process(OpenProcess(PROCESS_ALL_ACCESS,0,pid)):
-                    Tools.InjectDLL(pid,bytes(os.getenv("temp")+"\\NTDHider.dll","utf-8"))
-                else:
-                    run(os.getenv("temp")+"\\NTDHide32Runner.exe --pid=%d --type=%d"%(pid,1),stdout=PIPE)
-                Sleep(100)
-                ptr2=pointer(c_int(0))
-                windll.user32.GetWindowDisplayAffinity(hwnd,ptr2)
-                if ptr2.contents.value!=ptr.contents.value:
-                    self.topLabel2.setText("隐藏窗口成功")
-                    self.log("隐藏窗口成功")
-                else:
-                    self.topLabel2.setText("隐藏窗口失败")
-                    self.log("隐藏窗口失败")
-                self.topLabel2.show()
-                x,y,_,__=GetWindowRect(hwnd)
-                SetWindowPos(self.topLabel2.winId(),HWND_TOPMOST,x+10,y+10,0,0,SWP_NOSIZE)
-                if self.checkBox_4.isChecked():
-                    windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0)
-                else:
-                    windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0x11)
-                self.tl2timer.start()
+            pids=process_iter()
+            procname=""
+            for p in pids:
+                if(p.pid==pid):
+                    procname=p.name()
+                    break
+            self.floatwin.setText(f"窗口标题：{GetWindowText(hwnd)}\n窗口类名：{GetClassName(hwnd)}\n窗口位置：{str(GetWindowRect(hwnd))}\n窗口句柄：{int(hwnd)}\n窗口进程：{procname}")
+            self.floatwin.adjustSize()
+            self.floatwin.setGeometry(GetWindowRect(hwnd)[0]+50,GetWindowRect(hwnd)[1]+50,self.floatwin.width(),self.floatwin.height())
+            self.textBrowser_2.setPlainText(f"窗口标题：{GetWindowText(hwnd)}\n窗口类名：{GetClassName(hwnd)}\n窗口位置：{str(GetWindowRect(hwnd))}\n窗口句柄：{int(hwnd)}\n窗口进程：{procname}")
+        except: pass
+    def openIconFile(self):
+        if(not IsWindow(self.nowhwnd)):
+            print("窗口句柄无效")
+            return
+        dir=QFileDialog.getOpenFileName(self,"选择图标文件","","图标(*.ico)")
+        if(dir[0]):
+            li=LoadImage(0,dir[0],IMAGE_ICON,GetSystemMetrics(win32con.SM_CXSMICON),GetSystemMetrics(win32con.SM_CYSMICON),LR_LOADFROMFILE)
+            SendMessage(self.nowhwnd,WM_SETICON,ICON_SMALL,li)
+            SendMessage(self.nowhwnd,WM_SETICON,ICON_BIG,li)
+            self.log("设置图标成功")
+        else:
+            self.log("已取消选择")
+    def stopCap(self):
+        try:
+            self.captimer.stop()
+            self.captimer.deleteLater()
+            self.floatwin.close()
+            self.log("捕获窗口完毕")
+            self.hk.unregister(("control","alt","p"))
+            self.capWindow.setEnabled(1)
+            self.hideThisWindow.setEnabled(1)
+            self.topThisWindow.setEnabled(1)
+            self.killThisWindow.setEnabled(1)
+            self.changeThisWindowTitle.setEnabled(1)
+            self.newWindowTitle.setEnabled(1)
+            self.resetTitle.setEnabled(1)
+            self.changeNormalIcon.setEnabled(1)
+            self.openFolderIcon.setEnabled(1)
+            self.resetIcon.setEnabled(1)
+            hwnd=GetForegroundWindow()
+            self.nowhwnd=hwnd
+            self.oldname=GetWindowText(hwnd)
+            self.oldiconbig=SendMessage(hwnd,WM_GETICON,ICON_BIG,0)
+            self.oldiconsmall=SendMessage(hwnd,WM_GETICON,ICON_SMALL,0)
+            pid=GetWindowThreadProcessId(hwnd)[1]
+            pids=process_iter()
+            procname=""
+            for p in pids:
+                if(p.pid==pid):
+                    procname=p.name()
+                    break
+            self.textBrowser_2.setPlainText(f"窗口标题：{GetWindowText(hwnd)}\n窗口类名：{GetClassName(hwnd)}\n窗口位置：{str(GetWindowRect(hwnd))}\n窗口句柄：{int(hwnd)}\n窗口进程：{procname}")
+            if not GetWindowLong(hwnd,GWL_EXSTYLE) & WS_EX_TOPMOST:
+                self.topThisWindow.setText("置顶此窗口")
+            else: self.topThisWindow.setText("取消置顶此窗口")
+        except: pass
     def switchWindowVisiable(self):
         if self.checkBox_4.isChecked():
             windll.user32.SetWindowDisplayAffinity(int(self.winId()),0)
@@ -473,7 +592,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         #         QApplication.processEvents()
         #     self.ttt.start()
         # elif self.pro==99:
-        #     self.progressBar.setValue(int(self.pro))
+        #     self.progressBar.setValue(int(selrandomf.pro))
         #     self.pushButton.setText("校验文件中...")
         #     self.progressBar.setMaximum(0)
         #     self.progressBar.setTextVisible(0)
@@ -500,7 +619,9 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     def hidelb(self):
         self.topLabel.hide()
         self.tltimer.stop()
-        SetForegroundWindow(self.hh)
+        try:
+            SetForegroundWindow(self.hh)
+        except: pass
     def hidelb2(self):
         try:
             self.topLabel2.hide()
@@ -508,8 +629,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         except: pass
     def unRemoteControl(self):
         if windll.shell32.IsUserAnAdmin():
+            
             QApplication.processEvents()
             if self.NoControl.isChecked():
+                self.warning("注意","开启了可能会掉线（在老师面前当场寄掉）\n一定要适度使用，如果发现问题可以马上关掉！qwq")
                 try:
                     QApplication.processEvents()
                     run('sc config MpsSvc start= auto',shell=True)
@@ -519,7 +642,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                     run('netsh advfirewall set allprofiles state on',shell=True)
                     QApplication.processEvents()
                     run('netsh advfirewall firewall set rule name="StudentMain.exe" new action=block',shell=True)
-                    self.log("拦截成功 请注意可能导致掉线")
+                    self.log("拦截成功")
                 except:
                     self.log("拦截失败")
                     self.NoControl.setCheckState(Qt.CheckState.Unchecked)
@@ -573,9 +696,21 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             windll.user32.SetWindowDisplayAffinity(int(box.winId()),0)
         else:
             windll.user32.SetWindowDisplayAffinity(int(box.winId()),0x11)
+    def warning(self,title,text,button="我已知悉"):
+        box=QMessageBox(self)
+        box.setText(text)
+        box.setWindowTitle(title)
+        box.setIcon(QMessageBox.Warning)
+        box.addButton(self.tr(button),QMessageBox.YesRole)
+        box.setWindowOpacity(self.windowOpacity())
+        box.show()
+        if self.checkBox_4.isChecked():
+            windll.user32.SetWindowDisplayAffinity(int(box.winId()),0)
+        else:
+            windll.user32.SetWindowDisplayAffinity(int(box.winId()),0x11)
     def unHook(self):
         if self.UnlockTDHook.isChecked():
-            if self.question("警告","可能导致程序闪退，是否继续？")==16384:
+            if self.question("警告","本程序可能因此炸掉，而且貌似没多大用（？）要用的话也不是不行？")==16384:
                 try:
                     if self.config.get("UseNTSD"):
                         Popen(self.ntsd+" -c q -pn prochelper64.exe ",shell=True,stdout=PIPE,stderr=PIPE)
@@ -652,7 +787,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             SendMessage(hwnd,WM_LBUTTONDOWN,MK_LBUTTON,0)
             SendMessage(hwnd,WM_LBUTTONUP,MK_LBUTTON,0)
     def closeGB(self):
-        if self.question("警告","确定关闭广播窗口吗？此操作不可逆！",x=GetWindowRect(tdgbhwnd)[0]+50,y=GetWindowRect(tdgbhwnd)[1]+100)==16384:
+        if self.question("警告","确定关闭广播窗口吗？此操作不可逆！\n（其实你可以重启极域的...）",x=GetWindowRect(tdgbhwnd)[0]+50,y=GetWindowRect(tdgbhwnd)[1]+100)==16384:
             SendMessage(tdgbhwnd, WM_SYSCOMMAND, SC_CLOSE, 0)
             self.log("关闭广播窗口成功")
             self.tray.showMessage("NoTopDomain","关闭广播窗口成功",QSystemTrayIcon.NoIcon,msecs=1000)
@@ -949,31 +1084,33 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         event.accept()
         if event.key()==16777220 and self.KillSome.hasFocus():
             self.killCurrent()
-    def killFocus(self):
-        if not self.isActiveWindow():
-            try:
-                hwnd=GetForegroundWindow()
-                pid=GetWindowThreadProcessId(hwnd)[1]
-                x,y,_,__=GetWindowRect(hwnd)
-                if self.question("提示","确定要杀掉焦点进程吗？\n%s PID："%Process(pid).name()+str(pid),x=x+20,y=y+70)==16384:
-                    if self.config.get("UseNTSD"):
-                        Popen(self.ntsd+" -c q -p %d"%pid,shell=True,stdout=PIPE,stderr=PIPE)
-                    elif self.config.get("UseThr"):
-                        if not Tools.KillProcessByThread(pid):
-                            raise Exception
-                    else:
-                        handle=OpenProcess(PROCESS_TERMINATE,0,pid)
-                        TerminateProcess(handle,0)
-                    self.log("已经杀掉焦点窗口，pid："+str(pid))
-                    self.tray.showMessage("NoTopDomain","已经杀掉焦点窗口，pid："+str(pid),QSystemTrayIcon.NoIcon,msecs=1000)
-                if self.isHidden():
-                    self.shownormal()
-                    self.hide()
-            except:
-                self.log("杀窗口失败")
-                self.tray.showMessage("NoTopDomain","杀掉焦点窗口失败",QSystemTrayIcon.NoIcon,msecs=1000)
-        else:
-            self.log("触发进程保护...")
+    def killFocus(self,mode=0):
+        try:
+            if(mode):
+                hwnd=self.nowhwnd
+            else: hwnd=GetForegroundWindow()
+            pid=GetWindowThreadProcessId(hwnd)[1]
+            if(pid==os.getpid()):
+                self.log("触发进程保护...")
+                return
+            x,y,_,__=GetWindowRect(hwnd)
+            if self.question("提示","确定要杀掉焦点进程吗？\n%s PID："%Process(pid).name()+str(pid),x=x+20,y=y+70)==16384:
+                if self.config.get("UseNTSD"):
+                    Popen(self.ntsd+" -c q -p %d"%pid,shell=True,stdout=PIPE,stderr=PIPE)
+                elif self.config.get("UseThr"):
+                    if not Tools.KillProcessByThread(pid):
+                        raise Exception
+                else:
+                    handle=OpenProcess(PROCESS_TERMINATE,0,pid)
+                    TerminateProcess(handle,0)
+                self.log("已经杀掉焦点窗口，PID："+str(pid))
+                self.tray.showMessage("NoTopDomain","已经杀掉焦点窗口，PID："+str(pid),QSystemTrayIcon.NoIcon,msecs=1000)
+            if self.isHidden():
+                self.shownormal()
+                self.hide()
+        except:
+            self.log("杀窗口失败")
+            self.tray.showMessage("NoTopDomain","杀掉焦点窗口失败",QSystemTrayIcon.NoIcon,msecs=1000)
     def enableTools(self):
         self.information("提示","以下工具/功能将被解禁：\n1.修改密码\n2.注册表编辑器\n3.切换用户\n4.任务管理器\n5.Autorun\n6.注销/开始菜单选项\n7.运行")
         try:
@@ -1162,37 +1299,48 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                 self.log("恢复禁网失败")
     def Feedback(self):
         self.fb.show()
-    def setTop(self):
-        if self.isActiveWindow() or self.topLabel.isActiveWindow() or self.moyu.isActiveWindow():
+    def setTop(self,mode=0):
+        if not mode:
+            hwnd=GetForegroundWindow()
+        else: hwnd=self.nowhwnd
+        if int(self.winId())==hwnd or self.topLabel.isActiveWindow() or self.moyu.isActiveWindow():
             self.log("触发进程保护...")
             return
-        hwnd=GetForegroundWindow()
-        if not GetWindowLong(hwnd,GWL_EXSTYLE) & WS_EX_TOPMOST:
-            self.hh=hwnd
-            self.topLabel.setText("置顶窗口")
-            self.topLabel.show()
-            if self.checkBox_4.isChecked():
-                windll.user32.SetWindowDisplayAffinity(int(self.topLabel.winId()),0)
+        try:
+            if not IsWindow(hwnd): raise Exception
+            if not GetWindowLong(hwnd,GWL_EXSTYLE) & WS_EX_TOPMOST:
+                self.hh=hwnd
+                self.topLabel.setText("置顶窗口")
+                self.topLabel.show()
+                if self.checkBox_4.isChecked():
+                    windll.user32.SetWindowDisplayAffinity(int(self.topLabel.winId()),0)
+                else:
+                    windll.user32.SetWindowDisplayAffinity(int(self.topLabel.winId()),0x11)
+                SetWindowPos(hwnd,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE)
+                x,y,_,__=GetWindowRect(hwnd)
+                SetWindowPos(self.topLabel.winId(),HWND_TOPMOST,x+10,y+10,0,0,SWP_NOSIZE)
+                self.tltimer.start()
+                self.log("置顶选中窗口成功，hwnd:%d"%hwnd)
             else:
-                windll.user32.SetWindowDisplayAffinity(int(self.topLabel.winId()),0x11)
-            SetWindowPos(hwnd,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE)
-            x,y,_,__=GetWindowRect(hwnd)
-            SetWindowPos(self.topLabel.winId(),HWND_TOPMOST,x+10,y+10,0,0,SWP_NOSIZE)
-            self.tltimer.start()
-            self.log("置顶选中窗口成功，hwnd:%d"%hwnd)
-        else:
-            self.hh=hwnd
-            self.topLabel.setText("取消置顶")
-            self.topLabel.show()
-            SetWindowPos(hwnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE)
-            x,y,_,__=GetWindowRect(hwnd)
-            SetWindowPos(self.topLabel.winId(),HWND_TOPMOST,x+10,y+10,0,0,SWP_NOSIZE)
-            if self.checkBox_4.isChecked():
-                windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0)
-            else:
-                windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0x11)
-            self.tltimer.start()
-            self.log("取消置顶选中窗口，hwnd:%d"%hwnd)
+                self.hh=hwnd
+                self.topLabel.setText("取消置顶")
+                self.topLabel.show()
+                SetWindowPos(hwnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE)
+                x,y,_,__=GetWindowRect(hwnd)
+                SetWindowPos(self.topLabel.winId(),HWND_TOPMOST,x+10,y+10,0,0,SWP_NOSIZE)
+                if self.checkBox_4.isChecked():
+                    windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0)
+                else:
+                    windll.user32.SetWindowDisplayAffinity(int(self.topLabel2.winId()),0x11)
+                self.tltimer.start()
+                self.log("取消置顶选中窗口，hwnd:%d"%hwnd)
+            if mode:
+                if self.topThisWindow.text()=="置顶此窗口":
+                    self.topThisWindow.setText("取消置顶此窗口")
+                elif self.topThisWindow.text()=="取消置顶此窗口":
+                    self.topThisWindow.setText("置顶此窗口")
+        except:
+            self.log("置顶窗口失败")
     def nbs(self):
         global flag3
         if flag3:
@@ -1447,6 +1595,11 @@ class setState(Thread):
                 window.GBing.setText("广播：<span style=\"color:green\">未进行</span>")
                 window.GBWindowed.setText("解冻全屏")
                 window.GBWindowed.setEnabled(False)
+            if not window.TDState:
+                window.NoRemoteRun.setEnabled(0)
+                window.NoRemoteRun.setChecked(0)
+            elif (not window.NoRemoteRun.isEnabled()) and not window.NoRemoteRun.isChecked():
+                window.NoRemoteRun.setEnabled(1)
             Sleep(1000)
     def cb1(self,hwnd,lparam):
         global tdgbhwnd,flag5
