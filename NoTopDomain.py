@@ -3,18 +3,28 @@
 '''
 QwQ (。・ω・。)
 
-NoTopDomain v2.5b3
+NoTopDomain v3.0b3
 
-很多屎山的awa
+很多屎山的awa 新的大改版之后更多了
 
 可以找到"shellsMaybeYouUse"来跑打包（（（
 
 !!
+接下来是
+
 某蒟蒻的垃圾代码
+!!
+
+没有注释！！！
+
+/* ! ! ! ! ! ! ! ! */
+
+(　o=^•ェ•)o　┏━┓
 '''
 
-import os,sys,difflib,urllib.request
+import os,sys,difflib,urllib.request,math
 import subprocess as su
+import qtawesome as qta
 from json import *
 from base64 import *
 from random import *
@@ -40,12 +50,13 @@ from libs.feedback import *
 from libs.UDPAttack import *
 from libs.system_hotkey import *
 from libs.moyu import *
+from libs.windowEffecter import *
 from platform import *
 from pynput import *
 
-# 全都不打库名qwq using namespace std;
 
-VERSION="v2.5b3"
+
+VERSION="v3.0b3"
 DEBUG=FALSE
 class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     sw=pyqtSignal()
@@ -62,21 +73,87 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     cm=pyqtSignal(int,int)
     def __init__(self):
         super().__init__()
+        self.isok=0
+        self.logque=[]
         self.setupUi(self)
         self.retranslateUi(self)
         self.loadConfig()
         self.setup()
         self.show()
         self.setFixedSize(self.width(),self.height())
+        self.isok=1
+        self.loque()
+        self.setHelpButton()
+        self.addEffect()
+        for i in range(8):
+            self.PigeonGames.setCurrentIndex(i%7) 
+        QApplication.processEvents()
         Thread(target=self.getUpdate).start()
         QApplication.processEvents()
+    def addEffect(self):
+        self.shadowEffect=[]
+        # for it in self.findChildren(QGroupBox):
+        #     self.shadowEffect.append(QGraphicsDropShadowEffect(self))
+        #     self.shadowEffect[-1].setOffset(0,0)
+        #     self.shadowEffect[-1].setBlurRadius(3)
+        #     self.shadowEffect[-1].setColor(Qt.gray)
+        #     print(Qt.gray)
+        #     it.setGraphicsEffect(self.shadowEffect[-1])
+        self.shadowEffect.append(QGraphicsDropShadowEffect(self))
+        self.shadowEffect[-1].setOffset(0,0)
+        self.shadowEffect[-1].setBlurRadius(20)
+        self.shadowEffect[-1].setColor(Qt.gray)
+        self.helpButton.setGraphicsEffect(self.shadowEffect[-1])
+        self.shadowEffect.append(QGraphicsDropShadowEffect(self))
+        self.shadowEffect[-1].setOffset(0,0)
+        self.shadowEffect[-1].setBlurRadius(10)
+        self.shadowEffect[-1].setColor(Qt.gray)
+        self.textBrowser.setGraphicsEffect(self.shadowEffect[-1])
+    def setHelpButton(self):
+        self.helpButton=QPushButton("?",self)
+        self.helpButton.setObjectName("helpButton")
+        self.helpButton.setGeometry(self.width()-100,self.height()-100,60,60)
+        self.helpButton.show()
+        self.textBrowser=QTextBrowser(self)
+        self.textBrowser.setObjectName("helpMd")
+        self.textBrowser.setGeometry(self.width()-420,80,370,self.height()-190)
+        self.textBrowser.stackUnder(self.helpButton)
+        self.helpButton.clicked.connect(lambda:(self.textBrowser.hide(),self.helpButton.setText("?")) if self.textBrowser.isVisible() else (self.textBrowser.show(),self.helpButton.setText("×")))
+        self.showHelp()
     def shownormal(self):
         if not self.checkBox_4.isChecked():
             windll.user32.SetWindowDisplayAffinity(int(self.winId()),0)
             windll.user32.SetWindowDisplayAffinity(int(self.winId()),0x00000011)
         self.showNormal()
+    def drawLogBar(self):
+        self.logtim+=1
+        if self.logtim<=4000:
+            self.logpro.setValue(10000*self.easeOutElastic((4000-self.logtim)/4000))
+        else:self.logpro.hide()
+        if self.logtim>=5000:
+            self.logTimer.stop()
+            self.logpro.hide()
+            self.logLabel.hide()
+    def easeOutElastic(self,x):
+        return x*(x**2)
     def setup(self):
+        self.logLabel=QLabel(self)
+        self.logLabel.setObjectName("logLabel")
+        self.logpro=QSlider(self)
+        self.logpro.setObjectName("logpro")
+        self.logpro.setMaximum(10000)
+        self.logpro.setEnabled(0)
+        self.logpro.setOrientation(Qt.Horizontal)
+        self.logLabel.setWordWrap(1)
+        self.logLabel.hide()
+        self.logtim=0
+        self.logTimer=QTimer()
+        self.logTimer.setInterval(1)
+        self.logTimer.timeout.connect(self.drawLogBar)
+        self.ver.setText(VERSION)
         pids=process_iter()
+        self.label_39.setPixmap(QIcon(qta.icon("ri.radar-line",color="gray")).pixmap(32,32))
+        self.label_44.setPixmap(QIcon(qta.icon("ei.magic",color="gray")).pixmap(32,32))
         self.logger=open(os.getenv("temp")+"\\NoTopDomain.log","ab+",buffering=0)
         self.logger.write(("[%s] %s %s 启动 DEBUG: %d\n"%(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),__file__,VERSION,DEBUG)).encode())
         self.setWindowTitle("NoTopDomain %s"%VERSION)
@@ -96,10 +173,14 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         try:
             reg=RegOpenKeyEx(HKEY_LOCAL_MACHINE,'SOFTWARE\\WOW6432Node\\TopDomain\\e-Learning Class Standard\\1.00',0,KEY_ALL_ACCESS)
             self.location=RegQueryValueEx(reg,"TargetDirectory")[0]
+            self.lineEdit_2.setText(self.location)
+            self.lineEdit_2.setCursorPosition(0)
         except:
             try:
                 reg=RegOpenKeyEx(HKEY_LOCAL_MACHINE,'SOFTWARE\\TopDomain\\e-Learning Class Standard\\1.00',0,KEY_ALL_ACCESS)
                 self.location=RegQueryValueEx(reg,"TargetDirectory")[0]
+                self.lineEdit_2.setText(self.location)
+                self.lineEdit_2.setCursorPosition(0)
             except:
                 self.location=""
                 self.CopyLink.setDisabled(1)
@@ -112,7 +193,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             except: pass
         try:
             if "Shutdown_back.exe" in os.listdir(self.location):
-                self.NoShutdown.setCheckState(Qt.Checked)
+                self.NoShutdown.setChecked(0)
         except: pass
         EnumWindows(self.NoRunningAgain,0)
         try:
@@ -139,6 +220,28 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.zb.start()
         self.vv.connect(self.verifyUnis)
         self.widget.hide()
+        self.ExitProcess.setIcon(qta.icon("fa.power-off",color="white"))
+        self.tb1.setIcon(qta.icon("ei.magic",color="white"))
+        self.tb2.setIcon(qta.icon("ri.settings-3-line",color="white"))
+        self.tb3.setIcon(qta.icon("ri.window-line",color="white"))
+        self.tb4.setIcon(qta.icon("fa.gamepad",color="white"))
+        self.tb5.setIcon(qta.icon("mdi.wall",color="white"))
+        self.tb6.setIcon(qta.icon("mdi.information-outline",color="white"))
+        self.stTSK.setIcon(qta.icon("fa.tasks"))
+        self.CopyLink.setIcon(qta.icon("ri.file-copy-2-line"))
+        self.deleteIcon.setIcon(qta.icon("ri.delete-bin-6-line"))
+        self.changeIcon.setIcon(qta.icon("fa5s.exchange-alt"))
+        self.refresh.setIcon(qta.icon("fa.refresh"))
+        self.pushButton_2.setIcon(qta.icon("fa5.save"))
+        self.reStart.setIcon(qta.icon("mdi.restart"))
+        self.CopyLink.setIconSize(QSize(20,20))
+        self.CopyLink.setFixedSize(self.lineEdit_2.height(),self.lineEdit_2.height())
+        self.label_5.setPixmap(qta.icon("mdi.file-link").pixmap(24,24))
+        self.label_6.setPixmap(qta.icon("fa5s.key").pixmap(24,24))
+        self.label_10.setPixmap(qta.icon("mdi6.progress-close").pixmap(28,28))
+        self.label_13.setPixmap(qta.icon("ph.terminal-window-bold").pixmap(28,28))
+        self.UninstallTopDomain.setIcon(qta.icon("ri.delete-bin-6-line"))
+        self.label_18.setPixmap(self.icon.scaled(100,100,Qt.IgnoreAspectRatio,Qt.SmoothTransformation))
         self.floatwin=QLabel()
         self.floatwin.setWindowFlags(Qt.FramelessWindowHint|Qt.WindowTransparentForInput|Qt.WindowStaysOnTopHint)
         self.floatwin.setWindowOpacity(0.8)
@@ -148,7 +251,6 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         windll.user32.SetWindowDisplayAffinity(int(self.fb.winId()),0x11)
         self.checkBox_5.clicked.connect(self.switchTitle)
         SetWindowPos(self.fb.winId(),HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE)
-        self.logLabel=QLabel()
         self.UnlockTDHook.clicked.connect(self.unHook)
         if not self.config.get("QssDisabled"):
             if DEBUG:
@@ -190,10 +292,18 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.trfl=0
         self.gjW=UDPAttack()
         self.gjW.setWindowIcon(self.windowIcon())
+        self.horizontalLayout_22.addWidget(self.gjW)
+        self.label_23.setPixmap(self.icon.scaled(40,40,Qt.IgnoreAspectRatio,Qt.SmoothTransformation))
         self.moyu=Moyu()
-        self.moyu.setWindowIcon(self.windowIcon())
-        self.moyu.setStyleSheet(self.styleSheet())
-        windll.user32.SetWindowDisplayAffinity(int(self.gjW.winId()),0x11)
+        # self.moyu.setWindowIcon(self.windowIcon())
+        # self.moyu.setStyleSheet(self.styleSheet())
+        self.horizontalLayout_5.addWidget(self.moyu)
+        self.moyu.widget.setFixedSize(self.moyu.widget.width()-40,self.moyu.widget.width()-40)
+        self.moyu.buttonbox.setFixedSize(self.moyu.widget.width(),self.moyu.buttonbox.height())
+        for i in range(1,5):
+            for j in range(1,5):
+                exec(f"self.moyu.b{i}_{j}.setFixedSize(self.moyu.widget.width()//4-18,self.moyu.widget.width()//4-18)")
+        # windll.user32.SetWindowDisplayAffinity(int(self.gjW.winId()),0x11)
         if not self.moyu.checkBox_2.isChecked():
             windll.user32.SetWindowDisplayAffinity(int(self.moyu.winId()),0x11)
         self.GBWindowed.clicked.connect(self.EnableFullScreen)
@@ -206,6 +316,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.action_6=QAction("摸鱼")
         self.action_7=QAction("攻击")
         self.action_5=QAction("退出")
+        self.pushButton_7.clicked.connect(self.showAbout)
         self.action_7.triggered.connect(self.gjW.showE)
         self.action_6.triggered.connect(self.moyu.showE)
         self.action_5.triggered.connect(lambda:os._exit(0) if self.question("提示","退出程序吗？")==16384 else 0)
@@ -223,13 +334,24 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.tl2timer.timeout.connect(self.hidelb2)
         self.checkBox.clicked.connect(self.reTrayState)
         self.pushButton_4.clicked.connect(lambda:Popen(f"""explorer /select, "{os.getenv("systemdrive")}\\NoTopDomain {self.updver}.exe" """,shell=True))
-        self.menubar.addActions([self.action_1,self.action_4,self.feedback,self.action_3,self.action_6,self.action_7,self.action_5])
+        self.closeWin.clicked.connect(self.close)
+        self.minWin.clicked.connect(self.sw.emit)
+        self.stTSK.clicked.connect(self.startTSK)
+        self.HangUpTD.setFixedSize(70,70)
+        self.GBWindowed.setFixedSize(70,70)
+        self.CloseGB.setFixedSize(70,70)
+        self.KillTD.setFixedSize(70,70)
+        self.ExitProcess.clicked.connect(lambda:os._exit(0) if self.question("提示","退出程序吗？")==16384 else 0)
+        # self.menubar.addActions([self.action_1,self.action_4,self.feedback,self.action_3,self.action_6,self.action_7,self.action_5])
         self.action_1.triggered.connect(self.showAbout)
         self.action_2.triggered.connect(self.showHelp)
         self.action_3.triggered.connect(self.startTSK)
         self.action_4.triggered.connect(lambda:Popen("notepad \""+os.getenv("temp")+"\\NoTopDomain.log"+"\"",shell=True))
+        self.pushButton_6.clicked.connect(lambda:Popen("notepad \""+os.getenv("temp")+"\\NoTopDomain.log"+"\"",shell=True))
         self.RestartExplorer.clicked.connect(self.restartExplorer)
-        self.setWindowFlags(Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
+        self.setWindowFlags(self.windowFlags()|Qt.FramelessWindowHint)
+        self.effect=window_effect.WindowEffect()
+        self.effect.setShadowEffect(self.winId())
         self.KillTD.clicked.connect(self.killTopDomain)
         self.HangUpTD.clicked.connect(self.hangTD)
         self.pushButton.clicked.connect(lambda:Thread(target=self.downloadUpdate).start())
@@ -239,7 +361,6 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.openFolderIcon.clicked.connect(self.openIconFile)
         if not self.config.get("QssDisabled"):
             self.trayMenu.setStyleSheet(menuqss)
-        self.showHelp()
         self.topThisWindow.clicked.connect(lambda:self.setTop(mode=1))
         self.hideThisWindow.clicked.connect(lambda:self.hideWindow(mode=1))
         self.killThisWindow.clicked.connect(lambda:self.killFocus(mode=1))
@@ -252,6 +373,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.a2.triggered.connect(lambda:os._exit(0) if self.question("提示","退出程序吗？")==16384 else 0)
         self.a3=QAction("配置")
         self.a3.triggered.connect(self.toSetting)
+        self.setWindowFlag
         self.trayMenu.addActions([self.a0,self.a1,self.a3,self.a2])
         self.tray.setContextMenu(self.trayMenu)
         self.gbMenu=QMenu(self)
@@ -259,6 +381,12 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         if not self.config.get("QssDisabled"):
             self.gbMenu.setStyleSheet(menuqss)
         self.NoRemoteRun.clicked.connect(self.noremoterun)
+        self.tb1.clicked.connect(lambda:self.PigeonGames.setCurrentIndex(0))
+        self.tb2.clicked.connect(lambda:self.PigeonGames.setCurrentIndex(1))
+        self.tb3.clicked.connect(lambda:self.PigeonGames.setCurrentIndex(2))
+        self.tb4.clicked.connect(lambda:self.PigeonGames.setCurrentIndex(3))
+        self.tb5.clicked.connect(lambda:self.PigeonGames.setCurrentIndex(4))
+        self.tb6.clicked.connect(lambda:self.PigeonGames.setCurrentIndex(5))
         self.g0=QAction("NoTopDomain Menu")
         self.g0.setEnabled(0)
         self.g1=QAction("查看帮助")
@@ -269,33 +397,29 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         self.g3.triggered.connect(self.forceFull)
         self.g4=QAction("关闭广播窗口")
         self.g4.triggered.connect(self.closeGB)
+        self.CloseGB.clicked.connect(self.closeGB)
         self.g5=QAction("杀掉极域")
         self.g5.triggered.connect(lambda:self.killTopDomain() if self.question("警告","真的要杀掉极域吗？",x=GetWindowRect(tdgbhwnd)[0]+50,y=GetWindowRect(tdgbhwnd)[1]+100)==16384 else 0)
         self.g6=QAction("恢复软件窗口")
         self.g6.triggered.connect(self.shownormal)
         self.gbMenu.addActions([self.g0,self.g6,self.g1,self.g2,self.g3,self.g4,self.g5])
-        self.label_10.setText("当前版本："+VERSION)
         if not self.checkBox.isChecked():
             self.tray.show()
-        self.feedback.triggered.connect(self.Feedback)
+        self.pushButton_5.clicked.connect(self.Feedback)
         self.UninstallTopDomain.clicked.connect(lambda:Thread(target=self.uninstallTopDomain).start())
         self.KeyboardYes.clicked.connect(self.enableKeyboard)
         self.MouseYes.clicked.connect(self.enableMouse)
         self.ToolsYes.clicked.connect(self.enableTools)
-        self.KeyboardYes.setCheckState(Qt.Checked)
+        self.KeyboardYes.setChecked(1)
         self.ttt=QTimer()
         self.ttt.setInterval(200)
         self.ttt.timeout.connect(self.showProgress)
         self.ts.connect(self.ttt.start)
-        self.IamTop.setCheckState(Qt.Checked)
+        self.IamTop.setChecked(1)
         self.IamTop.clicked.connect(self.toTop)
         self.NoShutdown.clicked.connect(self.noShutDown)
-        self.logLabel.setMaximumWidth(self.width()-10)
-        self.logLabel.setMinimumWidth(self.width()-10)
-        self.logLabel.setWordWrap(1)
         self.resetTitle.clicked.connect(lambda:self.newWindowTitle.setText(self.oldname))
         self.NoControl.clicked.connect(self.unRemoteControl)
-        self.statusbar.addWidget(self.logLabel)
         self.NoImg.clicked.connect(self.noImg)
         self.NoBlackScreen.clicked.connect(self.nbs)
         self.changeNormalIcon.clicked.connect(lambda:(
@@ -317,7 +441,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         try:
             if pid.status()=="stopped":
                 self.HangState=0
-                self.HangUpTD.setText("恢复极域")
+                self.HangUpTD.setText("恢复\n极域")
                 self.HangUpTD.setEnabled(True)
                 self.KillTD.setEnabled(False)
         except:
@@ -348,6 +472,14 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     #     proportion=round(realResolution['wide']/screenSize['wide'],2)
     #     return proportion
     # 可能有用
+    def mousePressEvent(self, event):
+        if event.pos().y()>self.widget_2.height():
+            return
+
+        ReleaseCapture()
+        SendMessage(self.window().winId(), win32con.WM_SYSCOMMAND,
+                    win32con.SC_MOVE + win32con.HTCAPTION, 0)
+        event.ignore()
     def NoRunningAgain(self,hwnd,lParam):
         if hwnd and "Qt5" in GetClassName(hwnd) and hwnd!=int(self.winId()) and difflib.SequenceMatcher(None,self.windowTitle(),GetWindowText(hwnd)).ratio()>0.6:
             SetForegroundWindow(hwnd)
@@ -369,8 +501,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         try:
             if self.NoRemoteRun.isChecked():
                 if self.question("提示","此功能尚不稳定，\
-开启后会自动在极域运行远程命令和杀掉进程时弹框确认，可能出现各种失败，继续吗？\n\
-如果因此被掉线导致您当场寄掉，这个蒟蒻可是不负责任的呢awa")\
+开启后会自动在极域运行远程命令和杀掉进程时弹框确认，可能出现各种失败如极域崩溃，继续吗？\n\
+如果因此被掉线导致您当场寄掉，这个蒟蒻可是不负责任的呢awa\n\
+可以实现的拦截包括但不限于：\n\
+1.禁止黑屏广播反复切换焦点\n2.拦截极域远程运行/关机\n3.拦截极域杀掉进程\n4.拦截极域关闭窗口\n5.禁止极域广播置顶")\
                 ==16384:
                     if not self.TDState:
                         self.log("未启动极域")
@@ -382,15 +516,27 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                             if not su.run(os.getenv("temp")+"\\NTDHookRunner.exe --pid="+str(i.pid),stdout=su.PIPE).returncode:
                                 self.log("设置极域系统函数钩子成功")
                                 self.NoRemoteRun.setEnabled(0)
+                                self.label_30.setEnabled(0)
                             else: 
                                 self.log("设置极域系统函数钩子失败")
-                                self.NoRemoteRun.setChecked(False)
+                                self.NoRemoteRun.setChecked(0)
+                else:
+                    self.NoRemoteRun.setChecked(0)
         except: 
             self.log("设置极域系统函数钩子失败")
-            self.NoRemoteRun.setChecked(False)
+            self.NoRemoteRun.setChecked(0)
     def switchTitle(self):
         global flag6
+        if self.checkBox_5.isChecked():
+            self.tmptmr=QTimer()
+            self.tmptmr.setInterval(1000)
+            self.tmptmr.timeout.connect(self.stoptmp)
+            self.tmptmr.start()
         flag6=not self.checkBox_5.isChecked()
+    def stoptmp(self):
+        self.tmptmr.stop()
+        self.tmptmr.deleteLater()
+        self.setWindowTitle(f"NoTopDomain {VERSION}")
     def closeMenu(self,x,y):
         x1,y1,x2,y2=GetWindowRect(self.gbMenu.winId())
         if x<=x1 or x>=x2 or y<=y1 or y>=y2:
@@ -645,7 +791,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                     self.log("拦截成功")
                 except:
                     self.log("拦截失败")
-                    self.NoControl.setCheckState(Qt.CheckState.Unchecked)
+                    self.NoControl.setChecked(0)
             else:
                 try:
                     QApplication.processEvents()
@@ -655,13 +801,28 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                     self.log("恢复成功")
                 except:
                     self.log("恢复失败")
-                    self.NoControl.setCheckState(Qt.CheckState.Checked)
+                    self.NoControl.setChecked(0)
         else:
             self.log("请以管理员权限重启后运行该命令")
-            self.NoControl.setCheckState(Qt.CheckState.Unchecked)
-    
+            self.NoControl.setChecked(0)
+    def loque(self):
+        for i in self.logque:
+            self.log(i)
     def log(self,ls):
-        self.logLabel.setText(ls)
+        if self.isok:
+            self.logLabel.setText("ℹ "+ls)
+            self.logLabel.setMaximumWidth(600)
+            self.logLabel.setWordWrap(0)
+            self.logLabel.adjustSize()
+            self.logLabel.setAlignment(Qt.AlignHCenter|Qt.AlignVCenter)
+            self.logLabel.setGeometry(self.width()/2-self.logLabel.width()/2,self.height()-150,self.logLabel.width(),self.logLabel.height())
+            self.logpro.setGeometry(self.logLabel.x()+18,self.logLabel.y()+self.logLabel.height()-3,self.logLabel.width()-36,3)
+            self.logLabel.show()
+            self.logpro.show()
+            self.logtim=0
+            self.logTimer.start()
+        else:
+            self.logque.append(ls)
         if DEBUG:
             try: print(ls)
             except: pass
@@ -741,9 +902,9 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                         self.log("解Hook成功")
                 except:
                     self.log("并未开启防杀或解除失败")
-                    self.UnlockTDHook.setCheckState(Qt.CheckState.Unchecked)
+                    self.UnlockTDHook.setChecked(0)
             else:
-                self.UnlockTDHook.setCheckState(Qt.CheckState.Unchecked)
+                self.UnlockTDHook.setChecked(0)
                 self.log("放弃解防杀")
         else:
             try:
@@ -787,8 +948,8 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             SendMessage(hwnd,WM_LBUTTONDOWN,MK_LBUTTON,0)
             SendMessage(hwnd,WM_LBUTTONUP,MK_LBUTTON,0)
     def closeGB(self):
-        if self.question("警告","确定关闭广播窗口吗？此操作不可逆！\n（其实你可以重启极域的...）",x=GetWindowRect(tdgbhwnd)[0]+50,y=GetWindowRect(tdgbhwnd)[1]+100)==16384:
-            SendMessage(tdgbhwnd, WM_SYSCOMMAND, SC_CLOSE, 0)
+        if self.question("警告","确定关闭广播窗口吗？此操作不可逆！\n（其实你可以重启极域的...）",x=GetWindowRect(GetForegroundWindow())[0]+50,y=GetWindowRect(GetForegroundWindow())[1]+100)==16384:
+            PostMessage(tdgbhwnd, WM_SYSCOMMAND, SC_CLOSE, 0)
             self.log("关闭广播窗口成功")
             self.tray.showMessage("NoTopDomain","关闭广播窗口成功",QSystemTrayIcon.NoIcon,msecs=1000)
     def reTrayState(self):
@@ -817,9 +978,9 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         hmenu=GetMenu(hwndChild)
         if LOWORD(hmenu)==1004:
             if IsWindowEnabled(hwndChild):
-                self.GBWindowed.setText("禁用全屏")
+                self.GBWindowed.setText("禁用\n全屏")
             else:
-                self.GBWindowed.setText("解冻全屏")
+                self.GBWindowed.setText("解冻\n全屏")
                 if not window.IamTop.isChecked():
                     window.IamTop.click()
     def startTSK(self):
@@ -910,7 +1071,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                         SendMessage(hwndChild,WM_LBUTTONDOWN,MK_LBUTTON,0)
                         SendMessage(hwndChild,WM_LBUTTONUP,MK_LBUTTON,0)
                         # YYDS
-                self.GBWindowed.setText("禁用全屏")
+                self.GBWindowed.setText("禁用\n全屏")
                 self.log("解禁按钮成功")
                 return 0
             else:
@@ -932,7 +1093,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                         SendMessage(hwndChild,WM_LBUTTONUP,MK_LBUTTON,0)
                         # YYDS
                 EnableWindow(hwndChild,FALSE)
-                self.GBWindowed.setText("解冻全屏")
+                self.GBWindowed.setText("解冻\n全屏")
                 self.log("禁用按钮成功")
                 return 0
         return 1
@@ -948,6 +1109,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                 self.label_11.setText(f"大小：{str(round(self.cl/1024/1024,2))}MB")
         except: pass
     def loadConfig(self):
+        self.PigeonGames.setCurrentIndex(1)
         try:
             try:
                 with open(os.getenv("temp")+"\\NTDConfig.json","r+") as f:
@@ -966,35 +1128,35 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             try:
                 with open(os.getenv("temp")+"\\NTDHooksConfig","r") as f:
                     if f.read().split()[0]=="1":
-                        self.checkBox_6.click()
+                        self.checkBox_6.setChecked(1)
                     f.seek(0)
                     if f.read().split()[1]=="1":
-                        self.checkBox_7.click()
+                        self.checkBox_7.setChecked(1)
             except:
                 try:
                     with open(os.getenv("temp")+"\\NTDHooksConfig","w+") as f:
                         f.write("0 0")
                 except: pass
             if self.config.get("HideTrayIcon"):
-                self.checkBox.click()
+                self.checkBox.setChecked(1)
             if self.config.get("AutoCommand"):
-                self.checkBox_2.click()
-            if self.config.get("QssDisabled"):
-                self.checkBox_3.click()
+                self.checkBox_2.setChecked(1)
+            # if self.config.get("QssDisabled"):
+            #     self.QSSDis.setChecked(1)
             if self.config.get("WindowVisible"):
-                self.checkBox_4.click()
+                self.checkBox_4.setChecked(1)
             else:
                 self.switchWindowVisiable()
             if self.config.get("NoRandomTitle"):
-                self.checkBox_5.click()
+                self.checkBox_5.setChecked(1)
                 global flag6
                 flag6=0
             if self.config.get("UseNTSD"):
-                self.radioButton_2.click()
+                self.radioButton_2.setChecked(1)
             elif self.config.get("UseThr"):
-                self.radioButton_3.click()
+                self.radioButton_3.setChecked(1)
             else:
-                self.radioButton.click()
+                self.radioButton.setChecked(1)
             self.showWindowHotKey.setText(self.config.get("AcWindow").upper())
             self.TSKHotKey.setText(self.config.get("HideWindow").upper())
             self.topFocusHotKey.setText(self.config.get("TopWindow").upper())
@@ -1009,6 +1171,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                          "TopWindow":"alt+y","KillWindow":"alt+k",
                          "Switch":"alt+q","ForceFull":"alt+f"}
             self.switchWindowVisiable()
+        self.PigeonGames.setCurrentIndex(0)
     def saveConfig(self):
         keys=("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w",
               "x","y","z","0","1","2","3","4","5","6","7","8","9","ctrl","alt","control","shift","esc",
@@ -1040,7 +1203,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         try:
             self.config["HideTrayIcon"]=self.checkBox.isChecked()
             self.config["AutoCommand"]=self.checkBox_2.isChecked()
-            self.config["QssDisabled"]=self.checkBox_3.isChecked()
+            # self.config["QssDisabled"]=self.QSSDis.isChecked()
             self.config["WindowVisible"]=self.checkBox_4.isChecked()
             self.config["NoRandomTitle"]=self.checkBox_5.isChecked()
             self.config["UseNTSD"]=self.radioButton_2.isChecked()
@@ -1064,8 +1227,8 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         except:
             self.log("保存失败")
     def closeEvent(self,event):
-        self.moyu.close()
-        self.gjW.close()
+        # self.moyu.close()
+        # self.gjW.close()
         if DEBUG:
             event.accept()
             try:
@@ -1084,6 +1247,13 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
         event.accept()
         if event.key()==16777220 and self.KillSome.hasFocus():
             self.killCurrent()
+        if event.key()==16777220 and self.Run.hasFocus() and self.Run.text():
+            self.runCurrent()
+    def runCurrent(self):
+        try: 
+            os.startfile(self.Run.text())
+            self.log(f"运行 {self.Run.text()} 成功")
+        except Exception as e: self.log(f"运行失败 {e}")
     def killFocus(self,mode=0):
         try:
             if(mode):
@@ -1175,6 +1345,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                 r=RegQueryValueEx(reg,"UninstallPasswd")
                 if r[1] and r[0]!='Passwd[123456]':
                     self.TDPasswd.setText(r[0][7:-1])
+                    self.TDPasswd.setCursorPosition(0)
                     return
             except:
                 try:
@@ -1182,6 +1353,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                     r=RegQueryValueEx(reg,"UninstallPasswd")
                     if r[1] and r[0]!='Passwd[123456]':
                         self.TDPasswd.setText(r[0][7:-1])
+                        self.TDPasswd.setCursorPosition(0)
                         return
                 except: pass
             Tools.GetMythwarePasswordFromRegedit()
@@ -1189,11 +1361,14 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                 t=f.read()
                 if t[0]=='n': t=t[1:]
                 self.TDPasswd.setText(t)
+                self.TDPasswd.setCursorPosition(0)
         except:
             if self.location:
                 self.TDPasswd.setText("mythware_super_password")
+                self.TDPasswd.setCursorPosition(0)
             else:
                 self.TDPasswd.setText("未找到极域")
+                self.TDPasswd.setCursorPosition(0)
     def showHelp(self):
         try:
             self.textBrowser.setMarkdown(base64.b64decode(helpMD).decode().format(VERSION,self.config.get("AcWindow").upper(),self.config.get("KillWindow").upper(),self.config.get("HideWindow").upper(),self.config.get("TopWindow").upper(),self.config.get("ForceFull").upper(),self.config.get("Switch").upper()))
@@ -1336,8 +1511,8 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                 self.log("取消置顶选中窗口，hwnd:%d"%hwnd)
             if mode:
                 if self.topThisWindow.text()=="置顶此窗口":
-                    self.topThisWindow.setText("取消置顶此窗口")
-                elif self.topThisWindow.text()=="取消置顶此窗口":
+                    self.topThisWindow.setText("取消置顶")
+                elif self.topThisWindow.text()=="取消置顶":
                     self.topThisWindow.setText("置顶此窗口")
         except:
             self.log("置顶窗口失败")
@@ -1397,7 +1572,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                 pid.suspend()
                 self.log("挂起成功")
                 self.HangState=0
-                self.HangUpTD.setText("恢复极域")
+                self.HangUpTD.setText("恢复\n极域")
                 self.KillTD.setEnabled(False)
             except:
                 self.log("挂起失败")
@@ -1411,7 +1586,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                 pid.resume()
                 self.log("恢复成功")
                 self.HangState=1
-                self.HangUpTD.setText("挂起极域")
+                self.HangUpTD.setText("挂起\n极域")
                 self.KillTD.setEnabled(True)
             except:
                 self.log("恢复失败")
@@ -1436,7 +1611,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                     TerminateProcess(handle,0)
                 self.log("成功杀掉极域")
                 self.TDState=0
-                self.KillTD.setText("启动极域！！")
+                self.KillTD.setText("启动\n极域")
             except:
                 self.log("杀极域失败，可能开启了防杀")
         else:
@@ -1445,10 +1620,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                     if self.location:
                         Popen(f"""{self.location}studentmain.exe """,stdout=PIPE,shell=True)
                         self.TDState=1
-                        self.KillTD.setText("杀掉极域！！")
+                        self.KillTD.setText("杀掉\n极域")
                         self.log("成功启动极域")
                         self.HangState=1
-                        self.HangUpTD.setText("挂起极域")
+                        self.HangUpTD.setText("挂起\n极域")
                     else:
                         raise Exception
                 except:
@@ -1460,10 +1635,10 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                     res=Tools.StartMythware(self.location+"studentmain.exe")
                     if not res:
                         self.TDState=1
-                        self.KillTD.setText("杀掉极域！！")
+                        self.KillTD.setText("杀掉\n极域")
                         self.log("成功启动极域")
                         self.HangState=1
-                        self.HangUpTD.setText("挂起极域")
+                        self.HangUpTD.setText("挂起\n极域")
                     elif res==1:
                         self.log("启动极域失败（权限原因？）")
                     else:
@@ -1485,8 +1660,8 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             self.activateWindow()
         else:
             self.hide()
-            self.moyu.close()
-            self.gjW.close()
+            # self.moyu.close()
+            # self.gjW.close()
 class UnlockKeyboard(Thread):
     def __init__(self):
         super().__init__()
@@ -1494,6 +1669,8 @@ class UnlockKeyboard(Thread):
         while(1):
             if(flag2):
                 Tools.UnlockKeyboard()
+            else:
+                Sleep(100)
 class UnlockMouse(Thread):
     def __init__(self):
         super().__init__()
@@ -1522,7 +1699,7 @@ class setState(Thread):
         for p in pids:
             if(p.name().lower()=="studentmain.exe"):
                 window.TDState=0
-                window.KillTD.setText("启动极域！！")
+                window.KillTD.setText("启动\n极域")
         while(1):
             d=GetLastError()
             if d:
@@ -1531,11 +1708,9 @@ class setState(Thread):
             if flag6:
                 c=randint(1,5)
                 ti=list(wt)
-                for i in range(c):
+                for _ in range(c):
                     ti[randint(1,len(ti))-1]=choice(list("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-=_+~`[]\\|{}/?><,.;': "))
                 SetWindowText(window.winId(),"".join(ti))
-            else:
-                SetWindowText(window.winId(),wt)
             if not window.HangState:
                 pid,s=0,1
                 pids=process_iter()
@@ -1544,7 +1719,8 @@ class setState(Thread):
                         s,pid=0,p.pid
                         break
                 if not s:
-                    window.StudentRunning.setText("极域：<span style=\"color:red\">挂起中</span> <span style=\"color:gray\">PID:%s</span>"%pid)
+                    window.StudentRunning.setText("<span style=\"color:red\">挂起中</span> <span style=\"color:gray\">PID:%s</span>"%pid)
+                    window.label_44.setPixmap(QIcon(qta.icon("ei.magic",color="red")).pixmap(32,32))
             else:
                 pid,s=0,1
                 pids=process_iter()
@@ -1553,26 +1729,29 @@ class setState(Thread):
                         s,pid=0,p.pid
                         break
                 if s:
-                    window.StudentRunning.setText("极域：<span style=\"color:green\">未运行</span>")
+                    window.StudentRunning.setText("<span style=\"color:green\">未运行</span>")
+                    window.label_44.setPixmap(QIcon(qta.icon("ei.magic",color="green")).pixmap(32,32))
                     window.HangUpTD.setEnabled(False)
                     # window.EnableTDBar.setEnabled(False)
                     window.TDState=0
-                    window.KillTD.setText("启动极域！！")
+                    window.KillTD.setText("启动\n极域")
                 else:
-                    window.StudentRunning.setText("极域：<span style=\"color:orange\">运行中</span> <span style=\"color:gray\">PID:%s</span>"%pid)
+                    window.StudentRunning.setText("<span style=\"color:orange\">运行中</span> <span style=\"color:gray\">PID:%s</span>"%pid)
+                    window.label_44.setPixmap(QIcon(qta.icon("ei.magic",color="orange")).pixmap(32,32))
                     window.HangUpTD.setEnabled(True)
                     # window.EnableTDBar.setEnabled(True)
                     window.TDState=1
-                    window.KillTD.setText("杀掉极域！！")
+                    window.KillTD.setText("杀掉\n极域")
                     window.HangState=1
-                    window.HangUpTD.setText("挂起极域")
+                    window.HangUpTD.setText("挂起\n极域")
             self.flag=1
             hwnd=0
             hwnd=FindWindow(0,"BlackScreen Window")
             if hwnd:
                 self.flag=0
-                window.GBWindowed.setText("解冻全屏")
+                window.GBWindowed.setText("解冻\n全屏")
                 window.GBWindowed.setEnabled(False)
+                window.CloseGB.setEnabled(False)
                 if not flag3:
                     window.GBing.setText("<span style=\"color:purple\">黑屏安静中</span>")
                 else:
@@ -1582,6 +1761,7 @@ class setState(Thread):
             if hwnd and "Afx:" in GetClassName(hwnd):
                 window.GBing.setText("广播：<span style=\"color:orange\">进行中</span>")
                 window.GBWindowed.setEnabled(True)
+                window.CloseGB.setEnabled(True)
                 flag5,tdgbhwnd=1,hwnd
                 try:
                     EnumChildWindows(hwnd,window.EnumChildWindowsProc2,LPARAM)
@@ -1592,20 +1772,26 @@ class setState(Thread):
                 EnumWindows(self.cb1,0)
             if self.flag:
                 flag5=0
-                window.GBing.setText("广播：<span style=\"color:green\">未进行</span>")
-                window.GBWindowed.setText("解冻全屏")
+                window.GBing.setText("<span style=\"color:green\">未进行</span>")
+                window.label_39.setPixmap(QIcon(qta.icon("ri.radar-line",color="green")).pixmap(32,32))
+                window.GBWindowed.setText("解冻\n全屏")
                 window.GBWindowed.setEnabled(False)
+                window.CloseGB.setEnabled(False)
             if not window.TDState:
                 window.NoRemoteRun.setEnabled(0)
+                window.label_30.setEnabled(0)
                 window.NoRemoteRun.setChecked(0)
             elif (not window.NoRemoteRun.isEnabled()) and not window.NoRemoteRun.isChecked():
                 window.NoRemoteRun.setEnabled(1)
+                window.label_30.setEnabled(1)
             Sleep(1000)
     def cb1(self,hwnd,lparam):
         global tdgbhwnd,flag5
         if "正在共享屏幕" in GetWindowText(hwnd) and "Afx:" in GetClassName(hwnd):
-            window.GBing.setText("广播：<span style=\"color:orange\">进行中</span>")
+            window.GBing.setText("<span style=\"color:orange\">进行中</span>")
+            window.label_39.setPixmap(QIcon(qta.icon("ri.radar-line",color="orange")).pixmap(32,32))
             window.GBWindowed.setEnabled(True)
+            window.CloseGB.setEnabled(True)
             try:
                 EnumChildWindows(hwnd,window.EnumChildWindowsProc2,LPARAM)
             except:

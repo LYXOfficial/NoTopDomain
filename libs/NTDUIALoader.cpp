@@ -48,6 +48,7 @@ int main(){
 		strcat(runs," --uac");
 		CreateProcessWithTokenW(token, LOGON_NETCREDENTIALS_ONLY, NULL, (LPWSTR)CharToLPWSTR(runs), NORMAL_PRIORITY_CLASS | CREATE_NEW_PROCESS_GROUP, NULL, NULL, &si, &pi);
 		CloseHandle(token);
+		VirtualAllocEx
 		return 0;
 	}
 	DWORD idL, idW;

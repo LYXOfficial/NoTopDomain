@@ -18,11 +18,11 @@ class UDPAttack(QWidget,Ui_UDPAttack.Ui_UDPAttacker):
         self.retranslateUi(self)
         self.setup()
         windll.user32.SetWindowDisplayAffinity(int(self.winId()),0x11)
-    def setzd(self):
-        if self.checkBox.isChecked():
-            SetWindowPos(self.winId(),HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE)
-        else:
-            SetWindowPos(self.winId(),HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE)
+    # def setzd(self):
+    #     if self.checkBox.isChecked():
+    #         SetWindowPos(self.winId(),HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE)
+    #     else:
+    #         SetWindowPos(self.winId(),HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE)
     def showE(self):
         # MessageBox(0,"因不可抗原因，该功能已被移除","NoTopDomain 提示",MB_ICONERROR)
         # return
@@ -98,7 +98,7 @@ class UDPAttack(QWidget,Ui_UDPAttack.Ui_UDPAttacker):
         self.spinBox.wheelEvent=lambda x:None
         self.spinBox_2.wheelEvent=lambda x:None
         self.spinBox_3.wheelEvent=lambda x:None
-        self.checkBox.clicked.connect(self.setzd)
+        # self.checkBox.clicked.connect(self.setzd)
         self.pushButton_4.clicked.connect(self.scanIIp)
         self.pushButton.clicked.connect(lambda:Thread(target=self.sendMessage).start())
         self.pushButton_2.clicked.connect(self.shutdown)

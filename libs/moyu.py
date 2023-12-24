@@ -6,11 +6,12 @@ from win32gui import *
 from win32con import *
 from win32api import *
 from . import Ui_Moyu
+import qtawesome as qta
 # import Ui_Moyu
 import sys,random
 mp={-4:"O3",-2:"O2",0:"",2:"WA",4:"TLE",8:"MLE",16:"RE",32:"CE",64:"PC",
     128:"UKE",256:"AC",512:"CSP",1024:"NOI",2048:"IOI",4096:"AK"}
-color={-4:"#fd86bd",-2:"green",0:"#ffedc5",2:"#e74c3c",4:"#052242",8:"#1055a1",16:"#9d3dcf",
+color={-4:"#fd86bd",-2:"green",0:"#CDC1B4",2:"#e74c3c",4:"#052242",8:"#1055a1",16:"#9d3dcf",
        32:"#ffe200",64:"rgb(242,128,17)",128:"#114885",256:"#52C41A",
        512:"#eed761",1024:"#8D2724",2048:"#66c8ff",4096:""}
 nscore=0
@@ -159,8 +160,19 @@ class Moyu(QWidget,Ui_Moyu.Ui_Moyu2048):
         self.retranslateUi(self)
         self.setup()
     def setup(self):
+        self.startButton.setIconSize(QSize(36,36))
+        self.Reset.setIconSize(QSize(36,36))
+        self.Reset.setFixedSize(36,36)
+        self.startButton.setFixedSize(36,36)
+        self.Reset.setIcon(qta.icon("msc.debug-restart",color="white"))
+        self.startButton.setIcon(qta.icon("msc.debug-start",color="white"))
+        self.checkBox.hide()
+        self.adjustSize()
+        self.checkBox_2.hide()
         self.startButton.clicked.connect(self.switchGame)
         self.status=0
+        self.startButton.setStyleSheet("background-color:transparent;")
+        self.Reset.setStyleSheet("background-color:transparent;")
         nscore=0
         self.can=0
         try:
@@ -203,7 +215,7 @@ class Moyu(QWidget,Ui_Moyu.Ui_Moyu2048):
             SetWindowPos(self.winId(),HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE)
     def tt(self):
         self.tim+=1
-        self.time.setText("时间：{:02.0f}:{:02.0f}:{:02.0f}"
+        self.time.setText("{:02.0f}:{:02.0f}:{:02.0f}"
                           .format(self.tim//60//60,self.tim//60%60,self.tim%60))
     def keyPressEvent(self,event):
         if self.status:
@@ -242,7 +254,7 @@ class Moyu(QWidget,Ui_Moyu.Ui_Moyu2048):
         for i in range(4):
             for j in range(4):
                 eval("self.b%d_%d.setText(mp[self.matrix[%d][%d]])"%(i+1,j+1,i,j))
-                eval("self.b%d_%d.setStyleSheet('color:white;background:%s;border:1px solid gray;border-radius:8px;font-size:24px;font-family:\"Microsoft YaHei\"')"%(i+1,j+1,color[self.matrix[i][j]]))
+                eval("self.b%d_%d.setStyleSheet('color:white;background:%s;border:none;border-radius:8px;font-size:24px;font-family:\"Microsoft YaHei\"')"%(i+1,j+1,color[self.matrix[i][j]]))
         akflag,fullflag=0,1
         for i in range(4):
             for j in range(4):
@@ -292,13 +304,13 @@ class Moyu(QWidget,Ui_Moyu.Ui_Moyu2048):
             self.flag=0
         if not self.status:
             self.Reset.setEnabled(1)
-            self.startButton.setText("暂停")
+            self.startButton.setIcon(qta.icon("msc.debug-pause",color="white"))
             self.status=1
             self.timer.start()
         else:
             self.Reset.setEnabled(0)
             self.timer.stop()
-            self.startButton.setText("开始")
+            self.startButton.setIcon(qta.icon("msc.debug-start",color="white"))
             self.status=0
 if __name__=="__main__":
     app=QApplication(sys.argv)

@@ -11,6 +11,7 @@ typedef LRESULT (WINAPI *rSendMessageW)(HWND hWnd,UINT Msg,WPARAM wParam,LPARAM 
 typedef LRESULT (WINAPI *rPostMessageA)(HWND hWnd,UINT Msg,WPARAM wParam,LPARAM lParam);
 typedef LRESULT (WINAPI *rPostMessageW)(HWND hWnd,UINT Msg,WPARAM wParam,LPARAM lParam);
 typedef BOOL (WINAPI *rSetWindowPos)(HWND hWnd,HWND hWndInsertAfter,int X,int Y,int cx,int cy,UINT uFlags);
+typedef WINBOOL (WINAPI *rSetForegroundWindow)(HWND hWnd);
 rCreateProcessA realCreateProcessA=(rCreateProcessA)&CreateProcessA;
 rCreateProcessW realCreateProcessW=(rCreateProcessW)&CreateProcessW;
 rWinExec realWinExec=(rWinExec)&WinExec;
@@ -20,6 +21,7 @@ rSendMessageW realSendMessageW=(rSendMessageW)&SendMessageW;
 rPostMessageA realPostMessageA=(rPostMessageA)&PostMessageA;
 rPostMessageW realPostMessageW=(rPostMessageW)&PostMessageW;
 rSetWindowPos realSetWindowPos=(rSetWindowPos)&SetWindowPos;
+rSetForegroundWindow realSetForegroundWindow=(rSetForegroundWindow)&SetForegroundWindow;
 BOOL WINAPI fakeCreateProcessA(LPCSTR lpApplicationName, LPSTR lpCommandLine, LPSECURITY_ATTRIBUTES lpProcessAttributes, LPSECURITY_ATTRIBUTES lpThreadAttributes, BOOL bInheritHandles, DWORD dwCreationFlags, LPVOID lpEnvironment, LPCSTR lpCurrentDirectory, LPSTARTUPINFOA lpStartupInfo, LPPROCESS_INFORMATION lpProcessInformation){
     if(strstr(lpCommandLine,"explorer")||strstr(lpCommandLine,"TDChalk"))
         return realCreateProcessA(lpApplicationName,
@@ -251,8 +253,21 @@ BOOL WINAPI fakeSetWindowPos(HWND hWnd,HWND hWndInsertAfter,int X,int Y,
         FILE* fi=fopen(r,"r");
         fscanf(fi,"%*d %d",&can);
         fclose(fi);
-        if(can) return realSetWindowPos(hWnd,HWND_NOTOPMOST,X,Y,cx,cy,~((~uFlags)|SWP_NOZORDER));
+        if((hWndInsertAfter==(HWND)-1)&&can)
+            return realSetWindowPos(hWnd,HWND_NOTOPMOST,X,Y,cx,cy,uFlags);
         else return realSetWindowPos(hWnd,hWndInsertAfter,X,Y,cx,cy,uFlags);
+    }
+BOOL WINAPI fakeSetForegroundWindow(HWND hWnd){
+        int can;
+        char r[1005];
+        char* rr=getenv("temp");
+        strcpy(r,rr);
+        strcat(r,"\\NTDHooksConfig");
+        FILE* fi=fopen(r,"r");
+        fscanf(fi,"%*d %d",&can);
+        fclose(fi);
+        if(can) return 0;
+        else return realSetForegroundWindow(hWnd);
     }
 BOOL APIENTRY DllMain(HMODULE hModule,DWORD dReason,LPVOID lpReserved){
     switch(dReason){
@@ -296,6 +311,10 @@ BOOL APIENTRY DllMain(HMODULE hModule,DWORD dReason,LPVOID lpReserved){
                 reinterpret_cast<void**>(&realSetWindowPos))!=MH_OK)
                     return FALSE;
             if(MH_EnableHook((PVOID*)&SetWindowPos)!=MH_OK) return FALSE;
+            if(MH_CreateHook((PVOID*)&SetForegroundWindow,(PVOID*)&fakeSetForegroundWindow,
+                reinterpret_cast<void**>(&realSetForegroundWindow))!=MH_OK)
+                    return FALSE;
+            if(MH_EnableHook((PVOID*)&SetForegroundWindow)!=MH_OK) return FALSE;
 
     }
     return TRUE;
