@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1025</width>
-    <height>756</height>
+    <width>959</width>
+    <height>691</height>
    </rect>
   </property>
   <property name="font">
@@ -51,7 +51,7 @@
        <item row="0" column="1" rowspan="3">
         <widget class="QStackedWidget" name="PigeonGames">
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="PigeonGamesPage1">
           <layout class="QGridLayout" name="gridLayout_4">
@@ -1955,7 +1955,7 @@ By XDFZ @LYX</string>
          <property name="minimumSize">
           <size>
            <width>300</width>
-           <height>0</height>
+           <height>180</height>
           </size>
          </property>
          <property name="title">
@@ -2548,8 +2548,8 @@ By XDFZ @LYX</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1025</width>
-     <height>29</height>
+     <width>959</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>

@@ -3,7 +3,7 @@
 '''
 QwQ (。・ω・。)
 
-NoTopDomain v3.0b3
+NoTopDomain v3.0
 
 很多屎山的awa 新的大改版之后更多了
 
@@ -56,7 +56,7 @@ from pynput import *
 
 
 
-VERSION="v3.0b3"
+VERSION="v3.0"
 DEBUG=FALSE
 class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
     sw=pyqtSignal()
@@ -257,7 +257,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                 self.setStyleSheet(open(bl+"/libs/NTD.qss",encoding="utf-8").read())
             else:
                 self.setStyleSheet(base64.b64decode(qss).decode())
-        self.WebsiteYes.clicked.connect(lambda:Thread(target=self.websiteYes).start())
+        self.WebsiteYes.clicked.connect(self.websiteYes)
         self.hk=SystemHotkey()
         try:
             self.hk.register(['control' if i=='ctrl' else i for i in self.config.get("AcWindow").split("+")],callback=lambda _:self.sw.emit())
@@ -430,7 +430,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             SendMessage(self.nowhwnd,WM_SETICON,ICON_SMALL,self.oldiconsmall),
             SendMessage(self.nowhwnd,WM_SETICON,ICON_BIG,self.oldiconbig),
             self.log("恢复图标成功")) if IsWindow(self.nowhwnd) else self.log("窗口句柄无效"))
-        self.USBYes.clicked.connect(lambda:Thread(target=self.usbYes).start())
+        self.USBYes.clicked.connect(self.usbYes)
         self.tray.activated.connect(self.activate)
         SetWindowPos(self.winId(),HWND_TOPMOST,self.x(),self.y(),self.width(),self.height(),SWP_NOSIZE|SWP_NOZORDER)
         pids=process_iter()
@@ -816,7 +816,7 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
             self.logLabel.adjustSize()
             self.logLabel.setAlignment(Qt.AlignHCenter|Qt.AlignVCenter)
             self.logLabel.setGeometry(self.width()/2-self.logLabel.width()/2,self.height()-150,self.logLabel.width(),self.logLabel.height())
-            self.logpro.setGeometry(self.logLabel.x()+18,self.logLabel.y()+self.logLabel.height()-3,self.logLabel.width()-36,3)
+            self.logpro.setGeometry(self.logLabel.x()+18,self.logLabel.y()+self.logLabel.height()-2,self.logLabel.width()-36,2)
             self.logLabel.show()
             self.logpro.show()
             self.logtim=0
@@ -1462,7 +1462,8 @@ class NoTopDomain(QMainWindow,Ui_NoTopDomain,QObject):
                     run("sc stop TDNetworkFilter",shell=True,stdout=PIPE)
                 except: pass
                 self.log("解禁网站成功")
-            except:
+            except Exception as e:
+                print(e)
                 self.log("解禁网站失败")
         else:
             try:

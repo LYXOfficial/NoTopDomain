@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_NoTopDomain(object):
     def setupUi(self, NoTopDomain):
         NoTopDomain.setObjectName("NoTopDomain")
-        NoTopDomain.resize(1025, 756)
+        NoTopDomain.resize(959, 691)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei")
         font.setPointSize(10)
@@ -800,7 +800,7 @@ class Ui_NoTopDomain(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
         self.groupBox.setSizePolicy(sizePolicy)
-        self.groupBox.setMinimumSize(QtCore.QSize(300, 0))
+        self.groupBox.setMinimumSize(QtCore.QSize(300, 180))
         self.groupBox.setFlat(False)
         self.groupBox.setObjectName("groupBox")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.groupBox)
@@ -1078,7 +1078,7 @@ class Ui_NoTopDomain(object):
         self.gridLayout.addWidget(self.widget_2, 1, 0, 1, 3)
         NoTopDomain.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(NoTopDomain)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1025, 29))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 959, 25))
         self.menubar.setObjectName("menubar")
         NoTopDomain.setMenuBar(self.menubar)
         self.action1 = QtWidgets.QAction(NoTopDomain)
@@ -1095,7 +1095,7 @@ class Ui_NoTopDomain(object):
         self.action_5.setObjectName("action_5")
 
         self.retranslateUi(NoTopDomain)
-        self.PigeonGames.setCurrentIndex(2)
+        self.PigeonGames.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(NoTopDomain)
 
     def retranslateUi(self, NoTopDomain):

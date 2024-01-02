@@ -1,4 +1,5 @@
-QMainWindow *{
+import base64
+print(base64.b64encode("""QMainWindow *{
 	font-family:"Microsoft YaHei","Microsoft YaHei";
 }
 #centralwidget{
@@ -288,4 +289,4 @@ QTextEdit,QPlainTextEdit,QTextBrowser{
 }
 #groupBox{
 	min-height:180px;
-}
+}""".encode()))
